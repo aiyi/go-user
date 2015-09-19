@@ -22,5 +22,5 @@ func init() {
 }
 
 func getDSN() string {
-	return "chanxuehong:chanxuehong@tcp(gaowenbin.mysql.rds.aliyuncs.com:3306)/cxhtest?clientFoundRows=false&parseTime=true&loc=Asia%2FShanghai&timeout=5s&charset=utf8&collation=utf8_general_ci"
+	return "chanxuehong:chanxuehong@tcp(xxxxx:3306)/cxhtest?clientFoundRows=false&parseTime=true&loc=Asia%2FShanghai&timeout=5s&charset=utf8&collation=utf8_general_ci"
 }
