@@ -7,9 +7,12 @@ import (
 )
 
 func init() {
-	var err error
+	dsn, err := getDSN()
+	if err != nil {
+		panic(err)
+	}
 
-	db, err = sqlx.Open("mysql", getDSN())
+	db, err = sqlx.Open("mysql", dsn)
 	if err != nil {
 		panic(err)
 	}
@@ -18,9 +21,9 @@ func init() {
 	}
 
 	db.SetMaxIdleConns(20)
-	db.Mapper = reflectx.NewMapper("json")
+	db.Mapper = reflectx.NewMapper("sqlx")
 }
 
-func getDSN() string {
-	return "chanxuehong:chanxuehong@tcp(xxxxx:3306)/cxhtest?clientFoundRows=false&parseTime=true&loc=Asia%2FShanghai&timeout=5s&charset=utf8&collation=utf8_general_ci"
+func getDSN() (string, error) {
+	return "chanxuehong:chanxuehong@tcp(xxxxx:3306)/cxhtest?clientFoundRows=false&parseTime=true&loc=Asia%2FShanghai&timeout=5s&charset=utf8&collation=utf8_general_ci", nil
 }
