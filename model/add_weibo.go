@@ -4,21 +4,23 @@ import (
 	"github.com/aiyi/go-user/db"
 )
 
-type AddEmailParams struct {
+type AddWeiboParams struct {
 	UserId     int64  `sqlx:"user_id"`
-	Email      string `sqlx:"email"`
-	Password   []byte `sqlx:"password"`
-	Salt       []byte `sqlx:"salt"`
+	OpenId     string `sqlx:"openid"`
 	CreateTime int64  `sqlx:"create_time"`
 }
 
-func AddEmail(para *AddEmailParams) (err error) {
+func AddWeibo(para *AddWeiboParams) (err error) {
 	parax := struct {
-		*AddEmailParams
-		AuthType int64 `sqlx:"auth_type"`
+		*AddWeiboParams
+		AuthType int64  `sqlx:"auth_type"`
+		Password []byte `sqlx:"password"`
+		Salt     []byte `sqlx:"salt"`
 	}{
-		AddEmailParams: para,
-		AuthType:       AuthTypeEmail,
+		AddWeiboParams: para,
+		AuthType:       AuthTypeWeibo,
+		Password:       emptyByteSlice,
+		Salt:           emptyByteSlice,
 	}
 
 	tx, err := db.GetDB().Beginx()
@@ -26,13 +28,13 @@ func AddEmail(para *AddEmailParams) (err error) {
 		return
 	}
 
-	// user_email 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_email(user_id, email, has_bound) values(?, ?, 0)")
+	// user_weibo 表增加一个 item
+	stmt1, err := tx.Prepare("insert into user_weibo(user_id, openid, has_bound) values(?, ?, 0)")
 	if err != nil {
 		tx.Rollback()
 		return
 	}
-	if _, err = stmt1.Exec(parax.UserId, parax.Email); err != nil {
+	if _, err = stmt1.Exec(parax.UserId, parax.OpenId); err != nil {
 		tx.Rollback()
 		return
 	}

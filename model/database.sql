@@ -18,9 +18,10 @@ CREATE TABLE `user` (
 -- ----------------------------
 DROP TABLE IF EXISTS `user_email`;
 CREATE TABLE `user_email` (
-  `userid` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
   `email` varchar(128) NOT NULL,
-  PRIMARY KEY (`userid`),
+  `has_bound` tinyint(4) NOT NULL,
+  PRIMARY KEY (`user_id`),
   UNIQUE KEY `email` (`email`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -29,9 +30,10 @@ CREATE TABLE `user_email` (
 -- ----------------------------
 DROP TABLE IF EXISTS `user_phone`;
 CREATE TABLE `user_phone` (
-  `userid` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
   `phone` varchar(20) NOT NULL,
-  PRIMARY KEY (`userid`),
+  `has_bound` tinyint(4) NOT NULL,
+  PRIMARY KEY (`user_id`),
   UNIQUE KEY `phone` (`phone`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -40,9 +42,10 @@ CREATE TABLE `user_phone` (
 -- ----------------------------
 DROP TABLE IF EXISTS `user_qq`;
 CREATE TABLE `user_qq` (
-  `userid` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
   `openid` varchar(128) NOT NULL,
-  PRIMARY KEY (`userid`),
+  `has_bound` tinyint(4) NOT NULL,
+  PRIMARY KEY (`user_id`),
   UNIQUE KEY `openid` (`openid`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -51,9 +54,10 @@ CREATE TABLE `user_qq` (
 -- ----------------------------
 DROP TABLE IF EXISTS `user_wechat`;
 CREATE TABLE `user_wechat` (
-  `userid` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
   `openid` varchar(128) NOT NULL,
-  PRIMARY KEY (`userid`),
+  `has_bound` tinyint(4) NOT NULL,
+  PRIMARY KEY (`user_id`),
   UNIQUE KEY `openid` (`openid`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -62,8 +66,9 @@ CREATE TABLE `user_wechat` (
 -- ----------------------------
 DROP TABLE IF EXISTS `user_weibo`;
 CREATE TABLE `user_weibo` (
-  `userid` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
   `openid` varchar(128) NOT NULL,
-  PRIMARY KEY (`userid`),
+  `has_bound` tinyint(4) NOT NULL,
+  PRIMARY KEY (`user_id`),
   UNIQUE KEY `openid` (`openid`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

@@ -4,21 +4,28 @@ import (
 	"github.com/aiyi/go-user/db"
 )
 
-type AddEmailParams struct {
+type AddPhoneParams struct {
 	UserId     int64  `sqlx:"user_id"`
-	Email      string `sqlx:"email"`
-	Password   []byte `sqlx:"password"`
-	Salt       []byte `sqlx:"salt"`
+	Phone      string `sqlx:"phone"`
+	Password   []byte `sqlx:"password"` // 可以为 nil
+	Salt       []byte `sqlx:"salt"`     // 可以为 nil
 	CreateTime int64  `sqlx:"create_time"`
 }
 
-func AddEmail(para *AddEmailParams) (err error) {
+func AddPhone(para *AddPhoneParams) (err error) {
+	if para.Password == nil {
+		para.Password = emptyByteSlice
+	}
+	if para.Salt == nil {
+		para.Salt = emptyByteSlice
+	}
+
 	parax := struct {
-		*AddEmailParams
+		*AddPhoneParams
 		AuthType int64 `sqlx:"auth_type"`
 	}{
-		AddEmailParams: para,
-		AuthType:       AuthTypeEmail,
+		AddPhoneParams: para,
+		AuthType:       AuthTypePhone,
 	}
 
 	tx, err := db.GetDB().Beginx()
@@ -26,13 +33,13 @@ func AddEmail(para *AddEmailParams) (err error) {
 		return
 	}
 
-	// user_email 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_email(user_id, email, has_bound) values(?, ?, 0)")
+	// user_phone 表增加一个 item
+	stmt1, err := tx.Prepare("insert into user_phone(user_id, phone, has_bound) values(?, ?, 0)")
 	if err != nil {
 		tx.Rollback()
 		return
 	}
-	if _, err = stmt1.Exec(parax.UserId, parax.Email); err != nil {
+	if _, err = stmt1.Exec(parax.UserId, parax.Phone); err != nil {
 		tx.Rollback()
 		return
 	}

@@ -1,9 +1,10 @@
-package model
+package token
 
 type Token struct {
-	UserId     int64  `json:"userid"`
-	AuthType   int64  `json:"auth_type"`
+	SlotId     int    `json:"slot_id"`
 	Value      string `json:"value"`
+	UserId     int64  `json:"user_id"`
+	AuthType   int64  `json:"auth_type"`
 	ExpAccess  int64  `json:"exp_access"`
 	ExpRefresh int64  `json:"exp_refresh"`
 }
