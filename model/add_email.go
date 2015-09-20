@@ -38,7 +38,7 @@ func AddEmail(para *AddEmailParams) (err error) {
 	}
 
 	// user 表增加一个 item
-	stmt2, err := tx.PrepareNamed("insert into user(id, auth_types, password, salt, create_time) values(:user_id, :auth_type, :password, :salt, :create_time)")
+	stmt2, err := tx.PrepareNamed("insert into user(id, auth_types, password, salt, create_time, has_fixed) values(:user_id, :auth_type, :password, :salt, :create_time, 0)")
 	if err != nil {
 		tx.Rollback()
 		return

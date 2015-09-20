@@ -10,6 +10,7 @@ CREATE TABLE `user` (
   `password` varbinary(255) NOT NULL,
   `salt` varbinary(255) NOT NULL,
   `create_time` bigint(20) NOT NULL,
+  `has_fixed` tinyint(4) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
