@@ -7,6 +7,7 @@ import (
 type AddWechatParams struct {
 	UserId     int64  `sqlx:"user_id"`
 	OpenId     string `sqlx:"openid"`
+	Nickname   string `sqlx:"nickname"`
 	CreateTime int64  `sqlx:"create_time"`
 }
 
@@ -29,12 +30,12 @@ func AddWechat(para *AddWechatParams) (err error) {
 	}
 
 	// user_wechat 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_wechat(user_id, openid, has_bound) values(?, ?, 0)")
+	stmt1, err := tx.Prepare("insert into user_wechat(user_id, nickname, openid, has_bound) values(?, ?, ?, 0)")
 	if err != nil {
 		tx.Rollback()
 		return
 	}
-	if _, err = stmt1.Exec(parax.UserId, parax.OpenId); err != nil {
+	if _, err = stmt1.Exec(parax.UserId, parax.Nickname, parax.OpenId); err != nil {
 		tx.Rollback()
 		return
 	}

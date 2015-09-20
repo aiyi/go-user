@@ -27,12 +27,12 @@ func AddEmail(para *AddEmailParams) (err error) {
 	}
 
 	// user_email 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_email(user_id, email, has_bound) values(?, ?, 0)")
+	stmt1, err := tx.Prepare("insert into user_email(user_id, nickname, email, has_bound) values(?, ?, ?, 0)")
 	if err != nil {
 		tx.Rollback()
 		return
 	}
-	if _, err = stmt1.Exec(parax.UserId, parax.Email); err != nil {
+	if _, err = stmt1.Exec(parax.UserId, parax.Email, parax.Email); err != nil {
 		tx.Rollback()
 		return
 	}
