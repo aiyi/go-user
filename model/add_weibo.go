@@ -7,31 +7,28 @@ import (
 	"github.com/aiyi/go-user/userid"
 )
 
-type AddWeiboParams struct {
-	OpenId   string `sqlx:"openid"`
-	Nickname string `sqlx:"nickname"`
-}
-
-func AddWeibo(para *AddWeiboParams) (userId int64, err error) {
+func AddWeibo(openid, nickname string) (userId int64, err error) {
 	userId, err = userid.GetId()
 	if err != nil {
 		return
 	}
 
-	parax := struct {
-		*AddWeiboParams
+	para := struct {
 		UserId     int64  `sqlx:"user_id"`
 		AuthType   int64  `sqlx:"auth_type"`
+		OpenId     string `sqlx:"openid"`
+		Nickname   string `sqlx:"nickname"`
 		Password   []byte `sqlx:"password"`
 		Salt       []byte `sqlx:"salt"`
 		CreateTime int64  `sqlx:"create_time"`
 	}{
-		AddWeiboParams: para,
-		UserId:         userId,
-		AuthType:       AuthTypeWeibo,
-		Password:       emptyByteSlice,
-		Salt:           emptyByteSlice,
-		CreateTime:     time.Now().Unix(),
+		UserId:     userId,
+		AuthType:   AuthTypeWeibo,
+		OpenId:     openid,
+		Nickname:   nickname,
+		Password:   emptyByteSlice,
+		Salt:       emptyByteSlice,
+		CreateTime: time.Now().Unix(),
 	}
 
 	tx, err := db.GetDB().Beginx()
@@ -45,7 +42,7 @@ func AddWeibo(para *AddWeiboParams) (userId int64, err error) {
 		tx.Rollback()
 		return
 	}
-	if _, err = stmt1.Exec(parax.UserId, parax.Nickname, parax.OpenId); err != nil {
+	if _, err = stmt1.Exec(para.UserId, para.Nickname, para.OpenId); err != nil {
 		tx.Rollback()
 		return
 	}
@@ -56,7 +53,7 @@ func AddWeibo(para *AddWeiboParams) (userId int64, err error) {
 		tx.Rollback()
 		return
 	}
-	if _, err = stmt2.Exec(parax); err != nil {
+	if _, err = stmt2.Exec(para); err != nil {
 		tx.Rollback()
 		return
 	}

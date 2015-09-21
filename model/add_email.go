@@ -7,28 +7,26 @@ import (
 	"github.com/aiyi/go-user/userid"
 )
 
-type AddEmailParams struct {
-	Email    string `sqlx:"email"`
-	Password []byte `sqlx:"password"`
-	Salt     []byte `sqlx:"salt"`
-}
-
-func AddEmail(para *AddEmailParams) (userId int64, err error) {
+func AddEmail(email string, password, salt []byte) (userId int64, err error) {
 	userId, err = userid.GetId()
 	if err != nil {
 		return
 	}
 
-	parax := struct {
-		*AddEmailParams
-		UserId     int64 `sqlx:"user_id"`
-		AuthType   int64 `sqlx:"auth_type"`
-		CreateTime int64 `sqlx:"create_time"`
+	para := struct {
+		UserId     int64  `sqlx:"user_id"`
+		AuthType   int64  `sqlx:"auth_type"`
+		Email      string `sqlx:"email"`
+		Password   []byte `sqlx:"password"`
+		Salt       []byte `sqlx:"salt"`
+		CreateTime int64  `sqlx:"create_time"`
 	}{
-		AddEmailParams: para,
-		UserId:         userId,
-		AuthType:       AuthTypeEmail,
-		CreateTime:     time.Now().Unix(),
+		UserId:     userId,
+		AuthType:   AuthTypeEmail,
+		Email:      email,
+		Password:   password,
+		Salt:       salt,
+		CreateTime: time.Now().Unix(),
 	}
 
 	tx, err := db.GetDB().Beginx()
@@ -42,7 +40,7 @@ func AddEmail(para *AddEmailParams) (userId int64, err error) {
 		tx.Rollback()
 		return
 	}
-	if _, err = stmt1.Exec(parax.UserId, parax.Email, parax.Email); err != nil {
+	if _, err = stmt1.Exec(para.UserId, para.Email, para.Email); err != nil {
 		tx.Rollback()
 		return
 	}
@@ -53,7 +51,7 @@ func AddEmail(para *AddEmailParams) (userId int64, err error) {
 		tx.Rollback()
 		return
 	}
-	if _, err = stmt2.Exec(parax); err != nil {
+	if _, err = stmt2.Exec(para); err != nil {
 		tx.Rollback()
 		return
 	}

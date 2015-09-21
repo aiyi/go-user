@@ -7,18 +7,13 @@ import (
 	"github.com/aiyi/go-user/userid"
 )
 
-type AddPhoneParams struct {
-	Phone    string `sqlx:"phone"`
-	Password []byte `sqlx:"password"` // 可以为 nil
-	Salt     []byte `sqlx:"salt"`     // 可以为 nil
-}
-
-func AddPhone(para *AddPhoneParams) (userId int64, err error) {
-	if para.Password == nil {
-		para.Password = emptyByteSlice
+// password, salt 可以为 nil
+func AddPhone(phone string, password, salt []byte) (userId int64, err error) {
+	if password == nil {
+		password = emptyByteSlice
 	}
-	if para.Salt == nil {
-		para.Salt = emptyByteSlice
+	if salt == nil {
+		salt = emptyByteSlice
 	}
 
 	userId, err = userid.GetId()
@@ -26,16 +21,20 @@ func AddPhone(para *AddPhoneParams) (userId int64, err error) {
 		return
 	}
 
-	parax := struct {
-		*AddPhoneParams
-		UserId     int64 `sqlx:"user_id"`
-		AuthType   int64 `sqlx:"auth_type"`
-		CreateTime int64 `sqlx:"create_time"`
+	para := struct {
+		UserId     int64  `sqlx:"user_id"`
+		AuthType   int64  `sqlx:"auth_type"`
+		Phone      string `sqlx:"phone"`
+		Password   []byte `sqlx:"password"`
+		Salt       []byte `sqlx:"salt"`
+		CreateTime int64  `sqlx:"create_time"`
 	}{
-		AddPhoneParams: para,
-		UserId:         userId,
-		AuthType:       AuthTypePhone,
-		CreateTime:     time.Now().Unix(),
+		UserId:     userId,
+		AuthType:   AuthTypePhone,
+		Phone:      phone,
+		Password:   password,
+		Salt:       salt,
+		CreateTime: time.Now().Unix(),
 	}
 
 	tx, err := db.GetDB().Beginx()
@@ -49,7 +48,7 @@ func AddPhone(para *AddPhoneParams) (userId int64, err error) {
 		tx.Rollback()
 		return
 	}
-	if _, err = stmt1.Exec(parax.UserId, parax.Phone, parax.Phone); err != nil {
+	if _, err = stmt1.Exec(para.UserId, para.Phone, para.Phone); err != nil {
 		tx.Rollback()
 		return
 	}
@@ -60,7 +59,7 @@ func AddPhone(para *AddPhoneParams) (userId int64, err error) {
 		tx.Rollback()
 		return
 	}
-	if _, err = stmt2.Exec(parax); err != nil {
+	if _, err = stmt2.Exec(para); err != nil {
 		tx.Rollback()
 		return
 	}
