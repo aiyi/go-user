@@ -6,24 +6,22 @@ import (
 	"github.com/aiyi/go-user/db"
 )
 
-type BindQQParams struct {
-	UserId   int64  `sqlx:"user_id"` // 绑定到这个用户
-	OpenId   string `sqlx:"openid"`
-	Nickname string `sqlx:"nickname"`
-}
-
-// 给用户绑定QQ.
+// 绑定QQ(一般在认证后进行操作).
 //  调用该函数前, 请确认:
 //  1. 该用户存在并且 has_fixed
 //  2. 该用户未绑定QQ
 //  3. 该QQ未绑定用户
-func BindQQ(para *BindQQParams) (err error) {
-	parax := struct {
-		*BindQQParams
-		AuthType int64 `sqlx:"auth_type"`
+func BindQQ(userId int64, openid, nickname string) (err error) {
+	para := struct {
+		UserId   int64  `sqlx:"user_id"`
+		OpenId   string `sqlx:"openid"`
+		Nickname string `sqlx:"nickname"`
+		AuthType int64  `sqlx:"auth_type"`
 	}{
-		BindQQParams: para,
-		AuthType:     AuthTypeQQ,
+		UserId:   userId,
+		OpenId:   openid,
+		Nickname: nickname,
+		AuthType: AuthTypeQQ,
 	}
 
 	tx, err := db.GetDB().Beginx()
@@ -37,7 +35,7 @@ func BindQQ(para *BindQQParams) (err error) {
 		tx.Rollback()
 		return
 	}
-	if _, err = stmt1.Exec(parax.UserId, parax.Nickname, parax.OpenId); err != nil {
+	if _, err = stmt1.Exec(para.UserId, para.Nickname, para.OpenId); err != nil {
 		tx.Rollback()
 		return
 	}
@@ -48,17 +46,17 @@ func BindQQ(para *BindQQParams) (err error) {
 		tx.Rollback()
 		return
 	}
-	rslt, err := stmt2.Exec(parax)
+	rslt2, err := stmt2.Exec(para)
 	if err != nil {
 		tx.Rollback()
 		return
 	}
-	rowsAffected, err := rslt.RowsAffected()
+	rowsAffected2, err := rslt2.RowsAffected()
 	if err != nil {
 		tx.Rollback()
 		return
 	}
-	if rowsAffected != 1 {
+	if rowsAffected2 != 1 {
 		err = fmt.Errorf("绑定QQ %s 到用户 %d 失败", para.OpenId, para.UserId)
 		tx.Rollback()
 		return
