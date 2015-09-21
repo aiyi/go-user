@@ -12,8 +12,8 @@ type AddQQParams struct {
 	Nickname string `sqlx:"nickname"`
 }
 
-func AddQQ(para *AddQQParams) (err error) {
-	userId, err := userid.GetId()
+func AddQQ(para *AddQQParams) (userId int64, err error) {
+	userId, err = userid.GetId()
 	if err != nil {
 		return
 	}
@@ -40,7 +40,7 @@ func AddQQ(para *AddQQParams) (err error) {
 	}
 
 	// user_qq 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_qq(user_id, nickname, openid, has_bound) values(?, ?, ?, 0)")
+	stmt1, err := tx.Prepare("insert into user_qq(user_id, nickname, openid, has_fixed) values(?, ?, ?, 0)")
 	if err != nil {
 		tx.Rollback()
 		return

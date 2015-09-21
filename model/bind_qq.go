@@ -15,7 +15,7 @@ type BindQQParams struct {
 // 给用户绑定QQ.
 //  调用该函数前, 请确认:
 //  1. 该用户存在并且 has_fixed
-//  2. 该用户未当定QQ
+//  2. 该用户未绑定QQ
 //  3. 该QQ未绑定用户
 func BindQQ(para *BindQQParams) (err error) {
 	parax := struct {
@@ -32,7 +32,7 @@ func BindQQ(para *BindQQParams) (err error) {
 	}
 
 	// user_qq 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_qq(user_id, nickname, openid, has_bound) values(?, ?, ?, 1)")
+	stmt1, err := tx.Prepare("insert into user_qq(user_id, nickname, openid, has_fixed) values(?, ?, ?, 1)")
 	if err != nil {
 		tx.Rollback()
 		return

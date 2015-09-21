@@ -15,7 +15,7 @@ type BindWeiboParams struct {
 // 给用户绑定微博.
 //  调用该函数前, 请确认:
 //  1. 该用户存在并且 has_fixed
-//  2. 该用户未当定微博
+//  2. 该用户未绑定微博
 //  3. 该微博未绑定用户
 func BindWeibo(para *BindWeiboParams) (err error) {
 	parax := struct {
@@ -32,7 +32,7 @@ func BindWeibo(para *BindWeiboParams) (err error) {
 	}
 
 	// user_weibo 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_weibo(user_id, nickname, openid, has_bound) values(?, ?, ?, 1)")
+	stmt1, err := tx.Prepare("insert into user_weibo(user_id, nickname, openid, has_fixed) values(?, ?, ?, 1)")
 	if err != nil {
 		tx.Rollback()
 		return

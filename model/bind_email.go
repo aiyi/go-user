@@ -14,7 +14,7 @@ type BindEmailParams struct {
 // 给用户绑定邮箱.
 //  调用该函数前, 请确认:
 //  1. 该用户存在并且 has_fixed
-//  2. 该用户未当定邮箱
+//  2. 该用户未绑定邮箱
 //  3. 该邮箱未绑定用户
 func BindEmail(para *BindEmailParams) (err error) {
 	parax := struct {
@@ -31,7 +31,7 @@ func BindEmail(para *BindEmailParams) (err error) {
 	}
 
 	// user_email 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_email(user_id, nickname, email, has_bound) values(?, ?, ?, 1)")
+	stmt1, err := tx.Prepare("insert into user_email(user_id, nickname, email, has_fixed) values(?, ?, ?, 1)")
 	if err != nil {
 		tx.Rollback()
 		return

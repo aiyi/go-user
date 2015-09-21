@@ -14,7 +14,7 @@ type BindPhoneParams struct {
 // 给用户绑定手机.
 //  调用该函数前, 请确认:
 //  1. 该用户存在并且 has_fixed
-//  2. 该用户未当定手机
+//  2. 该用户未绑定手机
 //  3. 该手机未绑定用户
 func BindPhone(para *BindPhoneParams) (err error) {
 	parax := struct {
@@ -31,7 +31,7 @@ func BindPhone(para *BindPhoneParams) (err error) {
 	}
 
 	// user_phone 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_phone(user_id, nickname, phone, has_bound) values(?, ?, ?, 1)")
+	stmt1, err := tx.Prepare("insert into user_phone(user_id, nickname, phone, has_fixed) values(?, ?, ?, 1)")
 	if err != nil {
 		tx.Rollback()
 		return

@@ -12,8 +12,8 @@ type AddWeiboParams struct {
 	Nickname string `sqlx:"nickname"`
 }
 
-func AddWeibo(para *AddWeiboParams) (err error) {
-	userId, err := userid.GetId()
+func AddWeibo(para *AddWeiboParams) (userId int64, err error) {
+	userId, err = userid.GetId()
 	if err != nil {
 		return
 	}
@@ -40,7 +40,7 @@ func AddWeibo(para *AddWeiboParams) (err error) {
 	}
 
 	// user_weibo 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_weibo(user_id, nickname, openid, has_bound) values(?, ?, ?, 0)")
+	stmt1, err := tx.Prepare("insert into user_weibo(user_id, nickname, openid, has_fixed) values(?, ?, ?, 0)")
 	if err != nil {
 		tx.Rollback()
 		return

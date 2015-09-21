@@ -13,7 +13,7 @@ type AddPhoneParams struct {
 	Salt     []byte `sqlx:"salt"`     // 可以为 nil
 }
 
-func AddPhone(para *AddPhoneParams) (err error) {
+func AddPhone(para *AddPhoneParams) (userId int64, err error) {
 	if para.Password == nil {
 		para.Password = emptyByteSlice
 	}
@@ -21,7 +21,7 @@ func AddPhone(para *AddPhoneParams) (err error) {
 		para.Salt = emptyByteSlice
 	}
 
-	userId, err := userid.GetId()
+	userId, err = userid.GetId()
 	if err != nil {
 		return
 	}
@@ -44,7 +44,7 @@ func AddPhone(para *AddPhoneParams) (err error) {
 	}
 
 	// user_phone 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_phone(user_id, nickname, phone, has_bound) values(?, ?, ?, 0)")
+	stmt1, err := tx.Prepare("insert into user_phone(user_id, nickname, phone, has_fixed) values(?, ?, ?, 0)")
 	if err != nil {
 		tx.Rollback()
 		return

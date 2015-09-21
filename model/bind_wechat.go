@@ -15,7 +15,7 @@ type BindWechatParams struct {
 // 给用户绑定微信.
 //  调用该函数前, 请确认:
 //  1. 该用户存在并且 has_fixed
-//  2. 该用户未当定微信
+//  2. 该用户未绑定微信
 //  3. 该微信未绑定用户
 func BindWechat(para *BindWechatParams) (err error) {
 	parax := struct {
@@ -32,7 +32,7 @@ func BindWechat(para *BindWechatParams) (err error) {
 	}
 
 	// user_wechat 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_wechat(user_id, nickname, openid, has_bound) values(?, ?, ?, 1)")
+	stmt1, err := tx.Prepare("insert into user_wechat(user_id, nickname, openid, has_fixed) values(?, ?, ?, 1)")
 	if err != nil {
 		tx.Rollback()
 		return
