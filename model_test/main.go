@@ -2,5 +2,9 @@ package main
 
 func main() {
 	//add()
-	bind()
+	//fix1()
+	//bind()
+	//fix2()
+	//bind()
+	//bind2()
 }

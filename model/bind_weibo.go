@@ -6,12 +6,6 @@ import (
 	"github.com/aiyi/go-user/db"
 )
 
-type BindWeiboParams struct {
-	UserId   int64  `sqlx:"user_id"` // 绑定到这个用户
-	OpenId   string `sqlx:"openid"`
-	Nickname string `sqlx:"nickname"`
-}
-
 // 绑定微博(一般在认证后进行操作).
 //  调用该函数前, 请确认:
 //  1. 该用户存在并且 has_fixed

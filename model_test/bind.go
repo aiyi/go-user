@@ -1,42 +1,33 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/aiyi/go-user/model"
 )
 
 func bind() {
-	email := model.BindEmailParams{
-		UserId: 757050443187618548,
-		Email:  "bind@xxx.com",
-	}
-	fmt.Println(model.BindEmail(&email))
+	//email	 757120565977810729
+	//phone	 757120566451767081
+	//qq	 757120566976055081
+	//wechat 757120567823304489
+	//weibo	 757120568624416553
+	log.Println(model.BindEmail(757120568624416553, "bind@xxx.com"))
+	log.Println(model.BindPhone(757120565977810729, "19999999999"))
+	log.Println(model.BindQQ(757120566451767081, "bind_qq_openid", "bind_qq_nickname"))
+	log.Println(model.BindWechat(757120566976055081, "bind_wechat_openid", "bind_wechat_nickname"))
+	log.Println(model.BindWeibo(757120567823304489, "bind_weibo_openid", "bind_weibo_nickname"))
+}
 
-	phone := model.BindPhoneParams{
-		UserId: 757050443971953396,
-		Phone:  "19999999999",
-	}
-	fmt.Println(model.BindPhone(&phone))
-
-	qq := model.BindQQParams{
-		UserId:   757050444483658484,
-		OpenId:   "bind_openid",
-		Nickname: "bind_nickname",
-	}
-	fmt.Println(model.BindQQ(&qq))
-
-	wechat := model.BindWechatParams{
-		UserId:   757050444982780660,
-		OpenId:   "bind_openid",
-		Nickname: "bind_nickname",
-	}
-	fmt.Println(model.BindWechat(&wechat))
-
-	weibo := model.BindWeiboParams{
-		UserId:   757048980382156277,
-		OpenId:   "bind_openid",
-		Nickname: "bind_nickname",
-	}
-	fmt.Println(model.BindWeibo(&weibo))
+func bind2() {
+	//email	 757120565977810729
+	//phone	 757120566451767081
+	//qq	 757120566976055081
+	//wechat 757120567823304489
+	//weibo	 757120568624416553
+	log.Println(model.BindEmail(757120567823304489, "xbind@xxx.com"))
+	log.Println(model.BindPhone(757120568624416553, "x19999999999"))
+	log.Println(model.BindQQ(757120565977810729, "xbind_qq_openid", "bind_qq_nickname"))
+	log.Println(model.BindWechat(757120566451767081, "xbind_wechat_openid", "bind_wechat_nickname"))
+	log.Println(model.BindWeibo(757120566976055081, "xbind_weibo_openid", "bind_weibo_nickname"))
 }
