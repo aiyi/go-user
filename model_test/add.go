@@ -7,9 +7,9 @@ import (
 )
 
 func add() {
-	fmt.Println(model.AddEmail("email1@xxx.com", []byte("password"), []byte("salt")))
-	fmt.Println(model.AddPhone("18888888888", []byte("password"), []byte("salt")))
-	fmt.Println(model.AddQQ("openid", "nickname"))
-	fmt.Println(model.AddWechat("openid", "nickname"))
-	fmt.Println(model.AddWeibo("openid", "nickname"))
+	fmt.Println(model.AddEmail("email1@xxx.com", []byte("password"), []byte("salt"), 0))
+	fmt.Println(model.AddPhone("18888888888", []byte("password"), []byte("salt"), 0))
+	fmt.Println(model.AddQQ("openid", "nickname", 0))
+	fmt.Println(model.AddWechat("openid", "nickname", 0))
+	fmt.Println(model.AddWeibo("openid", "nickname", 0))
 }

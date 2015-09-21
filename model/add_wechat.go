@@ -7,10 +7,14 @@ import (
 	"github.com/aiyi/go-user/userid"
 )
 
-func AddWechat(openid, nickname string) (userId int64, err error) {
+func AddWechat(openid, nickname string, timestamp int64) (userId int64, err error) {
 	userId, err = userid.GetId()
 	if err != nil {
 		return
+	}
+
+	if timestamp == 0 {
+		timestamp = time.Now().Unix()
 	}
 
 	para := struct {
@@ -28,7 +32,7 @@ func AddWechat(openid, nickname string) (userId int64, err error) {
 		Nickname:   nickname,
 		Password:   emptyByteSlice,
 		Salt:       emptyByteSlice,
-		CreateTime: time.Now().Unix(),
+		CreateTime: timestamp,
 	}
 
 	tx, err := db.GetDB().Beginx()

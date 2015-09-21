@@ -8,17 +8,20 @@ import (
 )
 
 // password, salt 可以为 nil
-func AddPhone(phone string, password, salt []byte) (userId int64, err error) {
+func AddPhone(phone string, password, salt []byte, timestamp int64) (userId int64, err error) {
+	userId, err = userid.GetId()
+	if err != nil {
+		return
+	}
+
 	if password == nil {
 		password = emptyByteSlice
 	}
 	if salt == nil {
 		salt = emptyByteSlice
 	}
-
-	userId, err = userid.GetId()
-	if err != nil {
-		return
+	if timestamp == 0 {
+		timestamp = time.Now().Unix()
 	}
 
 	para := struct {
@@ -34,7 +37,7 @@ func AddPhone(phone string, password, salt []byte) (userId int64, err error) {
 		Phone:      phone,
 		Password:   password,
 		Salt:       salt,
-		CreateTime: time.Now().Unix(),
+		CreateTime: timestamp,
 	}
 
 	tx, err := db.GetDB().Beginx()

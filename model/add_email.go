@@ -7,10 +7,14 @@ import (
 	"github.com/aiyi/go-user/userid"
 )
 
-func AddEmail(email string, password, salt []byte) (userId int64, err error) {
+func AddEmail(email string, password, salt []byte, timestamp int64) (userId int64, err error) {
 	userId, err = userid.GetId()
 	if err != nil {
 		return
+	}
+
+	if timestamp == 0 {
+		timestamp = time.Now().Unix()
 	}
 
 	para := struct {
@@ -26,7 +30,7 @@ func AddEmail(email string, password, salt []byte) (userId int64, err error) {
 		Email:      email,
 		Password:   password,
 		Salt:       salt,
-		CreateTime: time.Now().Unix(),
+		CreateTime: timestamp,
 	}
 
 	tx, err := db.GetDB().Beginx()
