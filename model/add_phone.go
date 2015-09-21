@@ -1,15 +1,16 @@
 package model
 
 import (
+	"time"
+
 	"github.com/aiyi/go-user/db"
+	"github.com/aiyi/go-user/userid"
 )
 
 type AddPhoneParams struct {
-	UserId     int64  `sqlx:"user_id"`
-	Phone      string `sqlx:"phone"`
-	Password   []byte `sqlx:"password"` // 可以为 nil
-	Salt       []byte `sqlx:"salt"`     // 可以为 nil
-	CreateTime int64  `sqlx:"create_time"`
+	Phone    string `sqlx:"phone"`
+	Password []byte `sqlx:"password"` // 可以为 nil
+	Salt     []byte `sqlx:"salt"`     // 可以为 nil
 }
 
 func AddPhone(para *AddPhoneParams) (err error) {
@@ -20,12 +21,21 @@ func AddPhone(para *AddPhoneParams) (err error) {
 		para.Salt = emptyByteSlice
 	}
 
+	userId, err := userid.GetId()
+	if err != nil {
+		return
+	}
+
 	parax := struct {
 		*AddPhoneParams
-		AuthType int64 `sqlx:"auth_type"`
+		UserId     int64 `sqlx:"user_id"`
+		AuthType   int64 `sqlx:"auth_type"`
+		CreateTime int64 `sqlx:"create_time"`
 	}{
 		AddPhoneParams: para,
+		UserId:         userId,
 		AuthType:       AuthTypePhone,
+		CreateTime:     time.Now().Unix(),
 	}
 
 	tx, err := db.GetDB().Beginx()

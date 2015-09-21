@@ -1,27 +1,37 @@
 package model
 
 import (
+	"time"
+
 	"github.com/aiyi/go-user/db"
+	"github.com/aiyi/go-user/userid"
 )
 
 type AddQQParams struct {
-	UserId     int64  `sqlx:"user_id"`
-	OpenId     string `sqlx:"openid"`
-	Nickname   string `sqlx:"nickname"`
-	CreateTime int64  `sqlx:"create_time"`
+	OpenId   string `sqlx:"openid"`
+	Nickname string `sqlx:"nickname"`
 }
 
 func AddQQ(para *AddQQParams) (err error) {
+	userId, err := userid.GetId()
+	if err != nil {
+		return
+	}
+
 	parax := struct {
 		*AddQQParams
-		AuthType int64  `sqlx:"auth_type"`
-		Password []byte `sqlx:"password"`
-		Salt     []byte `sqlx:"salt"`
+		UserId     int64  `sqlx:"user_id"`
+		AuthType   int64  `sqlx:"auth_type"`
+		Password   []byte `sqlx:"password"`
+		Salt       []byte `sqlx:"salt"`
+		CreateTime int64  `sqlx:"create_time"`
 	}{
 		AddQQParams: para,
+		UserId:      userId,
 		AuthType:    AuthTypeQQ,
 		Password:    emptyByteSlice,
 		Salt:        emptyByteSlice,
+		CreateTime:  time.Now().Unix(),
 	}
 
 	tx, err := db.GetDB().Beginx()

@@ -1,27 +1,37 @@
 package model
 
 import (
+	"time"
+
 	"github.com/aiyi/go-user/db"
+	"github.com/aiyi/go-user/userid"
 )
 
 type AddWechatParams struct {
-	UserId     int64  `sqlx:"user_id"`
-	OpenId     string `sqlx:"openid"`
-	Nickname   string `sqlx:"nickname"`
-	CreateTime int64  `sqlx:"create_time"`
+	OpenId   string `sqlx:"openid"`
+	Nickname string `sqlx:"nickname"`
 }
 
 func AddWechat(para *AddWechatParams) (err error) {
+	userId, err := userid.GetId()
+	if err != nil {
+		return
+	}
+
 	parax := struct {
 		*AddWechatParams
-		AuthType int64  `sqlx:"auth_type"`
-		Password []byte `sqlx:"password"`
-		Salt     []byte `sqlx:"salt"`
+		UserId     int64  `sqlx:"user_id"`
+		AuthType   int64  `sqlx:"auth_type"`
+		Password   []byte `sqlx:"password"`
+		Salt       []byte `sqlx:"salt"`
+		CreateTime int64  `sqlx:"create_time"`
 	}{
 		AddWechatParams: para,
+		UserId:          userId,
 		AuthType:        AuthTypeWechat,
 		Password:        emptyByteSlice,
 		Salt:            emptyByteSlice,
+		CreateTime:      time.Now().Unix(),
 	}
 
 	tx, err := db.GetDB().Beginx()

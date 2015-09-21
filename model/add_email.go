@@ -1,24 +1,34 @@
 package model
 
 import (
+	"time"
+
 	"github.com/aiyi/go-user/db"
+	"github.com/aiyi/go-user/userid"
 )
 
 type AddEmailParams struct {
-	UserId     int64  `sqlx:"user_id"`
-	Email      string `sqlx:"email"`
-	Password   []byte `sqlx:"password"`
-	Salt       []byte `sqlx:"salt"`
-	CreateTime int64  `sqlx:"create_time"`
+	Email    string `sqlx:"email"`
+	Password []byte `sqlx:"password"`
+	Salt     []byte `sqlx:"salt"`
 }
 
 func AddEmail(para *AddEmailParams) (err error) {
+	userId, err := userid.GetId()
+	if err != nil {
+		return
+	}
+
 	parax := struct {
 		*AddEmailParams
-		AuthType int64 `sqlx:"auth_type"`
+		UserId     int64 `sqlx:"user_id"`
+		AuthType   int64 `sqlx:"auth_type"`
+		CreateTime int64 `sqlx:"create_time"`
 	}{
 		AddEmailParams: para,
+		UserId:         userId,
 		AuthType:       AuthTypeEmail,
+		CreateTime:     time.Now().Unix(),
 	}
 
 	tx, err := db.GetDB().Beginx()
