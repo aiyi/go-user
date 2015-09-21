@@ -6,24 +6,23 @@ import (
 	"github.com/aiyi/go-user/db"
 )
 
-type BindWechatParams struct {
-	UserId   int64  `sqlx:"user_id"` // 绑定到这个用户
-	OpenId   string `sqlx:"openid"`
-	Nickname string `sqlx:"nickname"`
+type BindPhoneParams struct {
+	UserId int64  `sqlx:"user_id"` // 绑定到这个用户
+	Phone  string `sqlx:"phone"`
 }
 
-// 给用户绑定微信.
+// 给用户绑定手机.
 //  调用该函数前, 请确认:
 //  1. 该用户存在并且 has_fixed
-//  2. 该用户未当定微信
-//  3. 该微信未绑定用户
-func BindWechat(para *BindWechatParams) (err error) {
+//  2. 该用户未当定手机
+//  3. 该手机未绑定用户
+func BindPhone(para *BindPhoneParams) (err error) {
 	parax := struct {
-		*BindWechatParams
+		*BindPhoneParams
 		AuthType int64 `sqlx:"auth_type"`
 	}{
-		BindWechatParams: para,
-		AuthType:         AuthTypeWechat,
+		BindPhoneParams: para,
+		AuthType:        AuthTypePhone,
 	}
 
 	tx, err := db.GetDB().Beginx()
@@ -31,13 +30,13 @@ func BindWechat(para *BindWechatParams) (err error) {
 		return
 	}
 
-	// user_wechat 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_wechat(user_id, nickname, openid, has_bound) values(?, ?, ?, 1)")
+	// user_phone 表增加一个 item
+	stmt1, err := tx.Prepare("insert into user_phone(user_id, nickname, phone, has_bound) values(?, ?, ?, 1)")
 	if err != nil {
 		tx.Rollback()
 		return
 	}
-	if _, err = stmt1.Exec(parax.UserId, parax.Nickname, parax.OpenId); err != nil {
+	if _, err = stmt1.Exec(parax.UserId, parax.Phone, parax.Phone); err != nil {
 		tx.Rollback()
 		return
 	}
@@ -59,7 +58,7 @@ func BindWechat(para *BindWechatParams) (err error) {
 		return
 	}
 	if rowsAffected != 1 {
-		err = fmt.Errorf("绑定微信 %s 到用户 %d 失败", para.OpenId, para.UserId)
+		err = fmt.Errorf("绑定手机 %s 到用户 %d 失败", para.Phone, para.UserId)
 		tx.Rollback()
 		return
 	}
