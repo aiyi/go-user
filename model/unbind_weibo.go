@@ -16,7 +16,7 @@ func UnbindWeibo(userId int64) (err error) {
 		NotAuthType AuthType `sqlx:"not_auth_type"`
 	}{
 		UserId:      userId,
-		NotAuthType: ^AuthTypeWeibo,
+		NotAuthType: AuthTypeMask &^ AuthTypeWeibo,
 	}
 
 	tx, err := db.GetDB().Beginx()

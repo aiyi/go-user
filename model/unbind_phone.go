@@ -16,7 +16,7 @@ func UnbindPhone(userId int64) (err error) {
 		NotAuthType AuthType `sqlx:"not_auth_type"`
 	}{
 		UserId:      userId,
-		NotAuthType: ^AuthTypePhone,
+		NotAuthType: AuthTypeMask &^ AuthTypePhone,
 	}
 
 	tx, err := db.GetDB().Beginx()

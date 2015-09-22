@@ -16,7 +16,7 @@ func UnbindWechat(userId int64) (err error) {
 		NotAuthType AuthType `sqlx:"not_auth_type"`
 	}{
 		UserId:      userId,
-		NotAuthType: ^AuthTypeWechat,
+		NotAuthType: AuthTypeMask &^ AuthTypeWechat,
 	}
 
 	tx, err := db.GetDB().Beginx()

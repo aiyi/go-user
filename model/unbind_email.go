@@ -16,7 +16,7 @@ func UnbindEmail(userId int64) (err error) {
 		NotAuthType AuthType `sqlx:"not_auth_type"`
 	}{
 		UserId:      userId,
-		NotAuthType: ^AuthTypeEmail,
+		NotAuthType: AuthTypeMask &^ AuthTypeEmail,
 	}
 
 	tx, err := db.GetDB().Beginx()
