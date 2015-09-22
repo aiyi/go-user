@@ -8,7 +8,7 @@ import (
 //  调用该函数前, 请确认:
 //  1. 该用户存在, 并且 has_fixed
 //  2. 该用户已经绑定邮箱
-func BindUpdateEmail(userId int64, email string) (err error) {
+func UpdateEmail(userId int64, email string) (err error) {
 	para := struct {
 		UserId   int64  `sqlx:"user_id"`
 		Email    string `sqlx:"email"`
@@ -31,7 +31,7 @@ func BindUpdateEmail(userId int64, email string) (err error) {
 //  调用该函数前, 请确认:
 //  1. 该用户存在, 并且 has_fixed
 //  2. 该用户已经绑定手机
-func BindUpdatePhone(userId int64, phone string) (err error) {
+func UpdatePhone(userId int64, phone string) (err error) {
 	para := struct {
 		UserId   int64  `sqlx:"user_id"`
 		Phone    string `sqlx:"phone"`
@@ -54,7 +54,7 @@ func BindUpdatePhone(userId int64, phone string) (err error) {
 //  调用该函数前, 请确认:
 //  1. 该用户存在, 并且 has_fixed
 //  2. 该用户已经绑定QQ
-func BindUpdateQQ(userId int64, openid, nickname string) (err error) {
+func UpdateQQ(userId int64, openid, nickname string) (err error) {
 	para := struct {
 		UserId   int64  `sqlx:"user_id"`
 		OpenId   string `sqlx:"openid"`
@@ -79,7 +79,7 @@ func BindUpdateQQ(userId int64, openid, nickname string) (err error) {
 //  调用该函数前, 请确认:
 //  1. 该用户存在, 并且 has_fixed
 //  2. 该用户已经绑定微信
-func BindUpdateWechat(userId int64, openid, nickname string) (err error) {
+func UpdateWechat(userId int64, openid, nickname string) (err error) {
 	para := struct {
 		UserId   int64  `sqlx:"user_id"`
 		OpenId   string `sqlx:"openid"`
@@ -104,7 +104,7 @@ func BindUpdateWechat(userId int64, openid, nickname string) (err error) {
 //  调用该函数前, 请确认:
 //  1. 该用户存在, 并且 has_fixed
 //  2. 该用户已经绑定微博
-func BindUpdateWeibo(userId int64, openid, nickname string) (err error) {
+func UpdateWeibo(userId int64, openid, nickname string) (err error) {
 	para := struct {
 		UserId   int64  `sqlx:"user_id"`
 		OpenId   string `sqlx:"openid"`
