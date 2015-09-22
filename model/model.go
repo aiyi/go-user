@@ -9,7 +9,7 @@ const (
 	AuthTypeWechat                      // 微信
 	AuthTypeWeibo                       // 微博
 
-	AuthTypeMask = 0x7FFFFFFFFFFFFFFF
+	AuthTypeMask = AuthType(int64(-1) ^ (int64(-1) << 63))
 )
 
 var emptyByteSlice = []byte{}
