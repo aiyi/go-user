@@ -12,6 +12,10 @@ import (
 //  2. 该用户未绑定微博
 //  3. 该微博未绑定用户
 func BindWeibo(userId int64, openid, nickname string) (err error) {
+	if nickname == "" {
+		nickname = openid
+	}
+
 	para := struct {
 		UserId   int64    `sqlx:"user_id"`
 		OpenId   string   `sqlx:"openid"`

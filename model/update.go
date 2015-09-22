@@ -55,6 +55,10 @@ func UpdatePhone(userId int64, phone string) (err error) {
 //  1. 该用户存在, 并且 has_fixed
 //  2. 该用户已经绑定QQ
 func UpdateQQ(userId int64, openid, nickname string) (err error) {
+	if nickname == "" {
+		nickname = openid
+	}
+
 	para := struct {
 		UserId   int64    `sqlx:"user_id"`
 		OpenId   string   `sqlx:"openid"`
@@ -80,6 +84,10 @@ func UpdateQQ(userId int64, openid, nickname string) (err error) {
 //  1. 该用户存在, 并且 has_fixed
 //  2. 该用户已经绑定微信
 func UpdateWechat(userId int64, openid, nickname string) (err error) {
+	if nickname == "" {
+		nickname = openid
+	}
+
 	para := struct {
 		UserId   int64    `sqlx:"user_id"`
 		OpenId   string   `sqlx:"openid"`
@@ -105,6 +113,10 @@ func UpdateWechat(userId int64, openid, nickname string) (err error) {
 //  1. 该用户存在, 并且 has_fixed
 //  2. 该用户已经绑定微博
 func UpdateWeibo(userId int64, openid, nickname string) (err error) {
+	if nickname == "" {
+		nickname = openid
+	}
+
 	para := struct {
 		UserId   int64    `sqlx:"user_id"`
 		OpenId   string   `sqlx:"openid"`

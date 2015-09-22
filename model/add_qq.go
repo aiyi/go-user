@@ -13,6 +13,9 @@ func AddQQ(openid, nickname string, timestamp int64) (userId int64, err error) {
 		return
 	}
 
+	if nickname == "" {
+		nickname = openid
+	}
 	if timestamp == 0 {
 		timestamp = time.Now().Unix()
 	}
