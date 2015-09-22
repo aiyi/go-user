@@ -8,7 +8,7 @@ import (
 
 // 解绑微信认证.
 //  调用该函数前, 请确认:
-//  1. 该用户存在并且 has_fixed
+//  1. 该用户存在并且 verified
 //  2. 该用户除了微信认证还有别的认证
 func UnbindWechat(userId int64) (err error) {
 	para := struct {
@@ -25,7 +25,7 @@ func UnbindWechat(userId int64) (err error) {
 	}
 
 	// user_wechat 表删除一个 item
-	stmt1, err := tx.Prepare("delete from user_wechat where user_id=? and has_fixed=1")
+	stmt1, err := tx.Prepare("delete from user_wechat where user_id=? and verified=1")
 	if err != nil {
 		tx.Rollback()
 		return
@@ -42,7 +42,7 @@ func UnbindWechat(userId int64) (err error) {
 	}
 
 	// user 更新 item
-	stmt2, err := tx.PrepareNamed("update user set auth_types = auth_types&:not_auth_type where id=:user_id and has_fixed=1 and auth_types&:not_auth_type<>0")
+	stmt2, err := tx.PrepareNamed("update user set auth_types = auth_types&:not_auth_type where id=:user_id and verified=1 and auth_types&:not_auth_type<>0")
 	if err != nil {
 		tx.Rollback()
 		return

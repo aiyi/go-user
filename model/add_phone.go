@@ -46,7 +46,7 @@ func AddPhone(phone string, password, salt []byte, timestamp int64) (userId int6
 	}
 
 	// user_phone 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_phone(user_id, nickname, phone, has_fixed) values(?, ?, ?, 0)")
+	stmt1, err := tx.Prepare("insert into user_phone(user_id, nickname, phone, verified) values(?, ?, ?, 0)")
 	if err != nil {
 		tx.Rollback()
 		return
@@ -57,7 +57,7 @@ func AddPhone(phone string, password, salt []byte, timestamp int64) (userId int6
 	}
 
 	// user 表增加一个 item
-	stmt2, err := tx.PrepareNamed("insert into user(id, auth_types, password, salt, create_time, has_fixed) values(:user_id, :auth_type, :password, :salt, :create_time, 0)")
+	stmt2, err := tx.PrepareNamed("insert into user(id, auth_types, password, salt, create_time, verified) values(:user_id, :auth_type, :password, :salt, :create_time, 0)")
 	if err != nil {
 		tx.Rollback()
 		return

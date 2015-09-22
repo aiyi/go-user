@@ -8,7 +8,7 @@ import (
 
 // 绑定手机(一般在认证后进行操作).
 //  调用该函数前, 请确认:
-//  1. 该用户存在并且 has_fixed
+//  1. 该用户存在并且 verified
 //  2. 该用户未绑定手机
 //  3. 该手机未绑定用户
 func BindPhone(userId int64, phone string) (err error) {
@@ -28,7 +28,7 @@ func BindPhone(userId int64, phone string) (err error) {
 	}
 
 	// user_phone 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_phone(user_id, nickname, phone, has_fixed) values(?, ?, ?, 1)")
+	stmt1, err := tx.Prepare("insert into user_phone(user_id, nickname, phone, verified) values(?, ?, ?, 1)")
 	if err != nil {
 		tx.Rollback()
 		return
@@ -39,7 +39,7 @@ func BindPhone(userId int64, phone string) (err error) {
 	}
 
 	// user 更新 item
-	stmt2, err := tx.PrepareNamed("update user set auth_types = auth_types|:auth_type where id=:user_id and has_fixed=1 and auth_types&:auth_type=0")
+	stmt2, err := tx.PrepareNamed("update user set auth_types = auth_types|:auth_type where id=:user_id and verified=1 and auth_types&:auth_type=0")
 	if err != nil {
 		tx.Rollback()
 		return

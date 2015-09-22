@@ -10,8 +10,8 @@ import (
 // 绑定手机新注册账户到已经存在的账户, 密码以原账户为准.
 //  调用该函数前, 请确认:
 //  1. toUserId != fromUserId
-//  2. toUserId 存在并且 has_fixed
-//  3. fromUserId 存在并且没有 has_fixed
+//  2. toUserId 存在并且 verified
+//  3. fromUserId 存在并且没有 verified
 //  4. toUserId 未绑定手机
 //  5. fromUserId 是手机新注册账户
 func BindExistPhone(toUserId, fromUserId int64) (err error) {
@@ -35,7 +35,7 @@ func BindExistPhone(toUserId, fromUserId int64) (err error) {
 	}
 
 	// user 更新 ToUserId
-	stmt1, err := tx.PrepareNamed("update user set auth_types = auth_types|:auth_type where id=:to_user_id and has_fixed=1 and auth_types&:auth_type=0")
+	stmt1, err := tx.PrepareNamed("update user set auth_types = auth_types|:auth_type where id=:to_user_id and verified=1 and auth_types&:auth_type=0")
 	if err != nil {
 		tx.Rollback()
 		return
@@ -52,7 +52,7 @@ func BindExistPhone(toUserId, fromUserId int64) (err error) {
 	}
 
 	// user 删除 FromUserId
-	stmt2, err := tx.PrepareNamed("delete from user where id=:from_user_id and hax_fixed=0 and auth_types=:auth_type")
+	stmt2, err := tx.PrepareNamed("delete from user where id=:from_user_id and verified=0 and auth_types=:auth_type")
 	if err != nil {
 		tx.Rollback()
 		return
@@ -69,7 +69,7 @@ func BindExistPhone(toUserId, fromUserId int64) (err error) {
 	}
 
 	// user_phone 更新 item
-	stmt3, err := tx.PrepareNamed("update user_phone set user_id=:to_user_id, has_fixed=1 where user_id=:from_user_id and has_fixed=0")
+	stmt3, err := tx.PrepareNamed("update user_phone set user_id=:to_user_id, verified=1 where user_id=:from_user_id and verified=0")
 	if err != nil {
 		tx.Rollback()
 		return

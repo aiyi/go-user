@@ -2,9 +2,9 @@ package main
 
 func main() {
 	//add()
-	//fix1()
+	//verify1()
 	//bind()
-	//fix2()
+	//verify2()
 	//bind()
 	//bind2()
 	//unbind()

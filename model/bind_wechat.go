@@ -8,7 +8,7 @@ import (
 
 // 绑定微信(一般在认证后进行操作).
 //  调用该函数前, 请确认:
-//  1. 该用户存在并且 has_fixed
+//  1. 该用户存在并且 verified
 //  2. 该用户未绑定微信
 //  3. 该微信未绑定用户
 func BindWechat(userId int64, openid, nickname string) (err error) {
@@ -34,7 +34,7 @@ func BindWechat(userId int64, openid, nickname string) (err error) {
 	}
 
 	// user_wechat 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_wechat(user_id, nickname, openid, has_fixed) values(?, ?, ?, 1)")
+	stmt1, err := tx.Prepare("insert into user_wechat(user_id, nickname, openid, verified) values(?, ?, ?, 1)")
 	if err != nil {
 		tx.Rollback()
 		return
@@ -45,7 +45,7 @@ func BindWechat(userId int64, openid, nickname string) (err error) {
 	}
 
 	// user 更新 item
-	stmt2, err := tx.PrepareNamed("update user set auth_types = auth_types|:auth_type where id=:user_id and has_fixed=1 and auth_types&:auth_type=0")
+	stmt2, err := tx.PrepareNamed("update user set auth_types = auth_types|:auth_type where id=:user_id and verified=1 and auth_types&:auth_type=0")
 	if err != nil {
 		tx.Rollback()
 		return

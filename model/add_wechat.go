@@ -44,7 +44,7 @@ func AddWechat(openid, nickname string, timestamp int64) (userId int64, err erro
 	}
 
 	// user_wechat 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_wechat(user_id, nickname, openid, has_fixed) values(?, ?, ?, 0)")
+	stmt1, err := tx.Prepare("insert into user_wechat(user_id, nickname, openid, verified) values(?, ?, ?, 0)")
 	if err != nil {
 		tx.Rollback()
 		return
@@ -55,7 +55,7 @@ func AddWechat(openid, nickname string, timestamp int64) (userId int64, err erro
 	}
 
 	// user 表增加一个 item
-	stmt2, err := tx.PrepareNamed("insert into user(id, auth_types, password, salt, create_time, has_fixed) values(:user_id, :auth_type, :password, :salt, :create_time, 0)")
+	stmt2, err := tx.PrepareNamed("insert into user(id, auth_types, password, salt, create_time, verified) values(:user_id, :auth_type, :password, :salt, :create_time, 0)")
 	if err != nil {
 		tx.Rollback()
 		return
