@@ -13,9 +13,9 @@ import (
 //  3. 该邮箱未绑定用户
 func BindEmail(userId int64, email string) (err error) {
 	para := struct {
-		UserId   int64  `sqlx:"user_id"`
-		Email    string `sqlx:"email"`
-		AuthType int64  `sqlx:"auth_type"`
+		UserId   int64    `sqlx:"user_id"`
+		Email    string   `sqlx:"email"`
+		AuthType AuthType `sqlx:"auth_type"`
 	}{
 		UserId:   userId,
 		Email:    email,

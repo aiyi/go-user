@@ -12,11 +12,11 @@ import (
 //  2. 该用户除了QQ认证还有别的认证
 func UnbindQQ(userId int64) (err error) {
 	para := struct {
-		UserId   int64 `sqlx:"user_id"`
-		AuthType int64 `sqlx:"auth_type"`
+		UserId      int64    `sqlx:"user_id"`
+		NotAuthType AuthType `sqlx:"not_auth_type"`
 	}{
-		UserId:   userId,
-		AuthType: AuthTypeQQ,
+		UserId:      userId,
+		NotAuthType: ^AuthTypeQQ,
 	}
 
 	tx, err := db.GetDB().Beginx()
@@ -42,7 +42,7 @@ func UnbindQQ(userId int64) (err error) {
 	}
 
 	// user 更新 item
-	stmt2, err := tx.PrepareNamed("update user set auth_types = auth_types&(~:auth_type) where id=:user_id and has_fixed=1 and auth_types&(~:auth_type)<>0")
+	stmt2, err := tx.PrepareNamed("update user set auth_types = auth_types&:not_auth_type where id=:user_id and has_fixed=1 and auth_types&:not_auth_type<>0")
 	if err != nil {
 		tx.Rollback()
 		return

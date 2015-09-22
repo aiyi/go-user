@@ -13,9 +13,9 @@ import (
 //  3. 该手机未绑定用户
 func BindPhone(userId int64, phone string) (err error) {
 	para := struct {
-		UserId   int64  `sqlx:"user_id"`
-		Phone    string `sqlx:"phone"`
-		AuthType int64  `sqlx:"auth_type"`
+		UserId   int64    `sqlx:"user_id"`
+		Phone    string   `sqlx:"phone"`
+		AuthType AuthType `sqlx:"auth_type"`
 	}{
 		UserId:   userId,
 		Phone:    phone,

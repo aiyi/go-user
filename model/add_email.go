@@ -18,12 +18,12 @@ func AddEmail(email string, password, salt []byte, timestamp int64) (userId int6
 	}
 
 	para := struct {
-		UserId     int64  `sqlx:"user_id"`
-		AuthType   int64  `sqlx:"auth_type"`
-		Email      string `sqlx:"email"`
-		Password   []byte `sqlx:"password"`
-		Salt       []byte `sqlx:"salt"`
-		CreateTime int64  `sqlx:"create_time"`
+		UserId     int64    `sqlx:"user_id"`
+		AuthType   AuthType `sqlx:"auth_type"`
+		Email      string   `sqlx:"email"`
+		Password   []byte   `sqlx:"password"`
+		Salt       []byte   `sqlx:"salt"`
+		CreateTime int64    `sqlx:"create_time"`
 	}{
 		UserId:     userId,
 		AuthType:   AuthTypeEmail,

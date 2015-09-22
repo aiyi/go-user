@@ -18,9 +18,9 @@ func BindExistWeibo(toUserId, fromUserId int64) (err error) {
 	}
 
 	para := struct {
-		ToUserId   int64 `sqlx:"to_user_id"`
-		FromUserId int64 `sqlx:"from_user_id"`
-		AuthType   int64 `sqlx:"auth_type"`
+		ToUserId   int64    `sqlx:"to_user_id"`
+		FromUserId int64    `sqlx:"from_user_id"`
+		AuthType   AuthType `sqlx:"auth_type"`
 	}{
 		ToUserId:   toUserId,
 		FromUserId: fromUserId,

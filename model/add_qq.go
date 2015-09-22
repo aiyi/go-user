@@ -18,13 +18,13 @@ func AddQQ(openid, nickname string, timestamp int64) (userId int64, err error) {
 	}
 
 	para := struct {
-		UserId     int64  `sqlx:"user_id"`
-		AuthType   int64  `sqlx:"auth_type"`
-		OpenId     string `sqlx:"openid"`
-		Nickname   string `sqlx:"nickname"`
-		Password   []byte `sqlx:"password"`
-		Salt       []byte `sqlx:"salt"`
-		CreateTime int64  `sqlx:"create_time"`
+		UserId     int64    `sqlx:"user_id"`
+		AuthType   AuthType `sqlx:"auth_type"`
+		OpenId     string   `sqlx:"openid"`
+		Nickname   string   `sqlx:"nickname"`
+		Password   []byte   `sqlx:"password"`
+		Salt       []byte   `sqlx:"salt"`
+		CreateTime int64    `sqlx:"create_time"`
 	}{
 		UserId:     userId,
 		AuthType:   AuthTypeQQ,

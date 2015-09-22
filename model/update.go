@@ -10,9 +10,9 @@ import (
 //  2. 该用户已经绑定邮箱
 func UpdateEmail(userId int64, email string) (err error) {
 	para := struct {
-		UserId   int64  `sqlx:"user_id"`
-		Email    string `sqlx:"email"`
-		AuthType int64  `sqlx:"auth_type"`
+		UserId   int64    `sqlx:"user_id"`
+		Email    string   `sqlx:"email"`
+		AuthType AuthType `sqlx:"auth_type"`
 	}{
 		UserId:   userId,
 		Email:    email,
@@ -33,9 +33,9 @@ func UpdateEmail(userId int64, email string) (err error) {
 //  2. 该用户已经绑定手机
 func UpdatePhone(userId int64, phone string) (err error) {
 	para := struct {
-		UserId   int64  `sqlx:"user_id"`
-		Phone    string `sqlx:"phone"`
-		AuthType int64  `sqlx:"auth_type"`
+		UserId   int64    `sqlx:"user_id"`
+		Phone    string   `sqlx:"phone"`
+		AuthType AuthType `sqlx:"auth_type"`
 	}{
 		UserId:   userId,
 		Phone:    phone,
@@ -56,10 +56,10 @@ func UpdatePhone(userId int64, phone string) (err error) {
 //  2. 该用户已经绑定QQ
 func UpdateQQ(userId int64, openid, nickname string) (err error) {
 	para := struct {
-		UserId   int64  `sqlx:"user_id"`
-		OpenId   string `sqlx:"openid"`
-		Nickname string `sqlx:"nickname"`
-		AuthType int64  `sqlx:"auth_type"`
+		UserId   int64    `sqlx:"user_id"`
+		OpenId   string   `sqlx:"openid"`
+		Nickname string   `sqlx:"nickname"`
+		AuthType AuthType `sqlx:"auth_type"`
 	}{
 		UserId:   userId,
 		OpenId:   openid,
@@ -81,10 +81,10 @@ func UpdateQQ(userId int64, openid, nickname string) (err error) {
 //  2. 该用户已经绑定微信
 func UpdateWechat(userId int64, openid, nickname string) (err error) {
 	para := struct {
-		UserId   int64  `sqlx:"user_id"`
-		OpenId   string `sqlx:"openid"`
-		Nickname string `sqlx:"nickname"`
-		AuthType int64  `sqlx:"auth_type"`
+		UserId   int64    `sqlx:"user_id"`
+		OpenId   string   `sqlx:"openid"`
+		Nickname string   `sqlx:"nickname"`
+		AuthType AuthType `sqlx:"auth_type"`
 	}{
 		UserId:   userId,
 		OpenId:   openid,
@@ -106,10 +106,10 @@ func UpdateWechat(userId int64, openid, nickname string) (err error) {
 //  2. 该用户已经绑定微博
 func UpdateWeibo(userId int64, openid, nickname string) (err error) {
 	para := struct {
-		UserId   int64  `sqlx:"user_id"`
-		OpenId   string `sqlx:"openid"`
-		Nickname string `sqlx:"nickname"`
-		AuthType int64  `sqlx:"auth_type"`
+		UserId   int64    `sqlx:"user_id"`
+		OpenId   string   `sqlx:"openid"`
+		Nickname string   `sqlx:"nickname"`
+		AuthType AuthType `sqlx:"auth_type"`
 	}{
 		UserId:   userId,
 		OpenId:   openid,
