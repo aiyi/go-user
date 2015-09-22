@@ -9,9 +9,11 @@ import (
 
 // 绑定手机新注册账户到已经存在的账户, 密码以原账户为准.
 //  调用该函数前, 请确认:
-//  1. toUserId 存在并且 has_fixed
-//  2. fromUserId 存在并且没有 has_fixed
-//  3. toUserId 未绑定手机
+//  1. toUserId != fromUserId
+//  2. toUserId 存在并且 has_fixed
+//  3. fromUserId 存在并且没有 has_fixed
+//  4. toUserId 未绑定手机
+//  5. fromUserId 是手机新注册账户
 func BindExistPhone(toUserId, fromUserId int64) (err error) {
 	if toUserId == fromUserId {
 		return errors.New("toUserId 不能等于 fromUserId")
@@ -50,7 +52,7 @@ func BindExistPhone(toUserId, fromUserId int64) (err error) {
 	}
 
 	// user 删除 FromUserId
-	stmt2, err := tx.PrepareNamed("delete from user where id=:from_user_id and hax_fixed=0")
+	stmt2, err := tx.PrepareNamed("delete from user where id=:from_user_id and hax_fixed=0 and auth_types=:auth_type")
 	if err != nil {
 		tx.Rollback()
 		return
