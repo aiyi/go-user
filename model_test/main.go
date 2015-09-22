@@ -7,5 +7,6 @@ func main() {
 	//fix2()
 	//bind()
 	//bind2()
-	unbind()
+	//unbind()
+	update()
 }
