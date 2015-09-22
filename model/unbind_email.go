@@ -24,7 +24,7 @@ func UnbindEmail(userId int64) (err error) {
 		return
 	}
 
-	// user_email 表增加一个 item
+	// user_email 表删除一个 item
 	stmt1, err := tx.Prepare("delete from user_email where user_id=? and has_fixed=1")
 	if err != nil {
 		tx.Rollback()

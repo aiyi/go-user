@@ -24,7 +24,7 @@ func UnbindPhone(userId int64) (err error) {
 		return
 	}
 
-	// user_phone 表增加一个 item
+	// user_phone 表删除一个 item
 	stmt1, err := tx.Prepare("delete from user_phone where user_id=? and has_fixed=1")
 	if err != nil {
 		tx.Rollback()

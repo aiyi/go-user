@@ -24,7 +24,7 @@ func UnbindQQ(userId int64) (err error) {
 		return
 	}
 
-	// user_qq 表增加一个 item
+	// user_qq 表删除一个 item
 	stmt1, err := tx.Prepare("delete from user_qq where user_id=? and has_fixed=1")
 	if err != nil {
 		tx.Rollback()

@@ -24,7 +24,7 @@ func UnbindWeibo(userId int64) (err error) {
 		return
 	}
 
-	// user_weibo 表增加一个 item
+	// user_weibo 表删除一个 item
 	stmt1, err := tx.Prepare("delete from user_weibo where user_id=? and has_fixed=1")
 	if err != nil {
 		tx.Rollback()
