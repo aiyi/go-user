@@ -7,12 +7,12 @@ import (
 	"github.com/aiyi/go-user/db"
 )
 
-// 绑定邮箱新注册账户到已经存在的账户, 密码以原账户为准.
+// 绑定微博新注册账户到已经存在的账户, 密码以原账户为准.
 //  调用该函数前, 请确认:
 //  1. toUserId 存在并且 has_fixed
 //  2. fromUserId 存在并且没有 has_fixed
-//  3. toUserId 未绑定邮箱
-func BindExistEmail(toUserId, fromUserId int64) (err error) {
+//  3. toUserId 未绑定微博
+func BindExistWeibo(toUserId, fromUserId int64) (err error) {
 	if toUserId == fromUserId {
 		return errors.New("toUserId 不能等于 fromUserId")
 	}
@@ -24,7 +24,7 @@ func BindExistEmail(toUserId, fromUserId int64) (err error) {
 	}{
 		ToUserId:   toUserId,
 		FromUserId: fromUserId,
-		AuthType:   AuthTypeEmail,
+		AuthType:   AuthTypeWeibo,
 	}
 
 	tx, err := db.GetDB().Beginx()
@@ -66,8 +66,8 @@ func BindExistEmail(toUserId, fromUserId int64) (err error) {
 		return
 	}
 
-	// user_email 更新 item
-	stmt3, err := tx.PrepareNamed("update user_email set user_id=:to_user_id, has_fixed=1 where user_id=:from_user_id and has_fixed=0")
+	// user_weibo 更新 item
+	stmt3, err := tx.PrepareNamed("update user_weibo set user_id=:to_user_id, has_fixed=1 where user_id=:from_user_id and has_fixed=0")
 	if err != nil {
 		tx.Rollback()
 		return
