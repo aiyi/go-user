@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` bigint(20) NOT NULL,
   `nickname` varchar(255) NOT NULL DEFAULT '' COMMENT '默认为空，如果不为空，则优先用这个 nickname',
-  `auth_types` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT 'bitmap',
+  `auth_types` bigint(20) NOT NULL DEFAULT '0' COMMENT 'bitmap',
   `password` varbinary(255) NOT NULL DEFAULT '',
   `salt` varbinary(255) NOT NULL DEFAULT '',
   `create_time` bigint(20) NOT NULL,

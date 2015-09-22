@@ -1,6 +1,6 @@
 package model
 
-type AuthType uint64 // 位图, 保险起见最多使用低 63 位
+type AuthType int64 // 位图, 保险起见最多使用低 63 位
 
 const (
 	AuthTypeEmail  AuthType = 1 << iota // 邮箱-密码
