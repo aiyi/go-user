@@ -8,3 +8,7 @@ type Token struct {
 	ExpAccess  int64  `json:"exp_access"`
 	ExpRefresh int64  `json:"exp_refresh"`
 }
+
+type TokenStorage struct {
+	TokenList []Token
+}

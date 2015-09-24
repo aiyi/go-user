@@ -1,4 +1,4 @@
-package verification
+package authcode
 
 import (
 	"math/rand"

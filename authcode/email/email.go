@@ -1,24 +1,22 @@
-package sms
+package email
 
 import (
 	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/chanxuehong/util/security"
 
+	"github.com/aiyi/go-user/authcode"
 	"github.com/aiyi/go-user/mc"
-	"github.com/aiyi/go-user/verification"
 )
 
-var compareByteSlice = make([]byte, verification.CodeLength) // 安全比较需要
-
-func key(phone string) string {
-	return "phone:" + phone
+func key(email string) string {
+	return "email:" + email
 }
 
-// 生成 phone 对应的 code, 6位随机数字, 有效期为 300 秒.
-func NewCode(phone string) ([]byte, error) {
+// 生成 email 对应的 code, 6位随机数字, 有效期为 300 秒.
+func NewCode(email string) ([]byte, error) {
 	item := memcache.Item{
-		Key:        key(phone),
-		Value:      verification.NewCode(),
+		Key:        key(email),
+		Value:      authcode.NewCode(),
 		Expiration: 300,
 	}
 	if err := mc.Client().Set(&item); err != nil {
@@ -27,9 +25,11 @@ func NewCode(phone string) ([]byte, error) {
 	return item.Value, nil
 }
 
+var compareByteSlice = make([]byte, authcode.CodeLength) // 安全比较需要
+
 // 验证 code
-func VerifyCode(phone string, code []byte) (bool, error) {
-	item, err := mc.Client().Get(key(phone))
+func VerifyCode(email string, code []byte) (bool, error) {
+	item, err := mc.Client().Get(key(email))
 	if err != nil && err != memcache.ErrCacheMiss { // 出错, 直接返回错误
 		return false, err
 	}
