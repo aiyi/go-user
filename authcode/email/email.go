@@ -28,7 +28,7 @@ func NewCode(email string) ([]byte, error) {
 var compareByteSlice = make([]byte, authcode.CodeLength) // 安全比较需要
 
 // 验证 code
-func VerifyCode(email string, code []byte) (bool, error) {
+func AuthCode(email string, code []byte) (bool, error) {
 	item, err := mc.Client().Get(key(email))
 	if err != nil && err != memcache.ErrCacheMiss { // 出错, 直接返回错误
 		return false, err
