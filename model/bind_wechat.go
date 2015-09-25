@@ -12,6 +12,16 @@ import (
 //  2. 该用户未绑定微信
 //  3. 该微信未绑定用户
 func BindWechat(userId int64, openid, nickname string) (err error) {
+	if err = removeUserFromCache(userId); err != nil {
+		return
+	}
+	if err = bindWechat(userId, openid, nickname); err != nil {
+		return
+	}
+	return syncUserToCache(userId)
+}
+
+func bindWechat(userId int64, openid, nickname string) (err error) {
 	if nickname == "" {
 		nickname = openid
 	}

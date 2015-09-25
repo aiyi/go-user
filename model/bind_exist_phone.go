@@ -15,6 +15,19 @@ import (
 //  4. toUserId 未绑定手机
 //  5. fromUserId 是手机新注册账户
 func BindExistPhone(toUserId, fromUserId int64) (err error) {
+	if err = removeUserFromCache(toUserId); err != nil {
+		return
+	}
+	if err = removeUserFromCache(fromUserId); err != nil {
+		return
+	}
+	if err = bindExistPhone(toUserId, fromUserId); err != nil {
+		return
+	}
+	return syncUserToCache(toUserId)
+}
+
+func bindExistPhone(toUserId, fromUserId int64) (err error) {
 	if toUserId == fromUserId {
 		return errors.New("toUserId 不能等于 fromUserId")
 	}

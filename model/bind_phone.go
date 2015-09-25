@@ -12,6 +12,16 @@ import (
 //  2. 该用户未绑定手机
 //  3. 该手机未绑定用户
 func BindPhone(userId int64, phone string) (err error) {
+	if err = removeUserFromCache(userId); err != nil {
+		return
+	}
+	if err = bindPhone(userId, phone); err != nil {
+		return
+	}
+	return syncUserToCache(userId)
+}
+
+func bindPhone(userId int64, phone string) (err error) {
 	para := struct {
 		UserId   int64    `sqlx:"user_id"`
 		Phone    string   `sqlx:"phone"`

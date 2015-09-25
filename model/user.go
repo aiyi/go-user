@@ -80,6 +80,16 @@ func GetUser(userId int64) (user *User, err error) {
 	return
 }
 
+func removeUserFromCache(userId int64) (err error) {
+	if err = mc.Client().Delete(mcUserKey(userId)); err != nil {
+		if err == memcache.ErrCacheMiss {
+			err = nil
+		}
+		return
+	}
+	return
+}
+
 func syncUserToCache(userId int64) (err error) {
 	stmt, err := db.GetStmt("select * from user where id=?")
 	if err != nil {

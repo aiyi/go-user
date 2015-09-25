@@ -15,6 +15,19 @@ import (
 //  4. toUserId 未绑定邮箱
 //  5. fromUserId 是邮箱新注册账户
 func BindExistEmail(toUserId, fromUserId int64) (err error) {
+	if err = removeUserFromCache(toUserId); err != nil {
+		return
+	}
+	if err = removeUserFromCache(fromUserId); err != nil {
+		return
+	}
+	if err = bindExistEmail(toUserId, fromUserId); err != nil {
+		return
+	}
+	return syncUserToCache(toUserId)
+}
+
+func bindExistEmail(toUserId, fromUserId int64) (err error) {
 	if toUserId == fromUserId {
 		return errors.New("toUserId 不能等于 fromUserId")
 	}

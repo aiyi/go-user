@@ -12,6 +12,16 @@ import (
 //  2. 该用户未绑定邮箱
 //  3. 该邮箱未绑定用户
 func BindEmail(userId int64, email string) (err error) {
+	if err = removeUserFromCache(userId); err != nil {
+		return
+	}
+	if err = bindEmail(userId, email); err != nil {
+		return
+	}
+	return syncUserToCache(userId)
+}
+
+func bindEmail(userId int64, email string) (err error) {
 	para := struct {
 		UserId   int64    `sqlx:"user_id"`
 		Email    string   `sqlx:"email"`

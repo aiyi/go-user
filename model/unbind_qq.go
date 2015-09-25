@@ -11,6 +11,16 @@ import (
 //  1. 该用户存在并且 verified
 //  2. 该用户除了QQ认证还有别的认证
 func UnbindQQ(userId int64) (err error) {
+	if err = removeUserFromCache(userId); err != nil {
+		return
+	}
+	if err = unbindQQ(userId); err != nil {
+		return
+	}
+	return syncUserToCache(userId)
+}
+
+func unbindQQ(userId int64) (err error) {
 	para := struct {
 		UserId      int64    `sqlx:"user_id"`
 		NotBindType BindType `sqlx:"not_bind_type"`

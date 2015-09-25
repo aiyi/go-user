@@ -15,6 +15,19 @@ import (
 //  4. toUserId 未绑定微博
 //  5. fromUserId 是微博新注册账户
 func BindExistWeibo(toUserId, fromUserId int64) (err error) {
+	if err = removeUserFromCache(toUserId); err != nil {
+		return
+	}
+	if err = removeUserFromCache(fromUserId); err != nil {
+		return
+	}
+	if err = bindExistWeibo(toUserId, fromUserId); err != nil {
+		return
+	}
+	return syncUserToCache(toUserId)
+}
+
+func bindExistWeibo(toUserId, fromUserId int64) (err error) {
 	if toUserId == fromUserId {
 		return errors.New("toUserId 不能等于 fromUserId")
 	}
