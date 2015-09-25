@@ -7,8 +7,9 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` bigint(20) NOT NULL,
   `nickname` varchar(255) NOT NULL DEFAULT '' COMMENT '默认为空，如果不为空，则优先用这个 nickname',
-  `auth_types` bigint(20) NOT NULL DEFAULT '0' COMMENT 'bitmap',
+  `bind_types` bigint(20) NOT NULL DEFAULT '0' COMMENT 'bitmap',
   `password` varbinary(255) NOT NULL DEFAULT '',
+  `password_tag` varbinary(255) NOT NULL DEFAULT '' COMMENT '密码改变同步改变, 一个随机字符串',
   `salt` varbinary(255) NOT NULL DEFAULT '',
   `create_time` bigint(20) NOT NULL,
   `verified` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否已经固定，不固定的帐号视为临时帐号，不能绑定其他帐号',

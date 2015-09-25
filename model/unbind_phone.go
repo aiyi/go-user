@@ -13,10 +13,10 @@ import (
 func UnbindPhone(userId int64) (err error) {
 	para := struct {
 		UserId      int64    `sqlx:"user_id"`
-		NotAuthType AuthType `sqlx:"not_auth_type"`
+		NotBindType BindType `sqlx:"not_bind_type"`
 	}{
 		UserId:      userId,
-		NotAuthType: AuthTypeMask &^ AuthTypePhone,
+		NotBindType: BindTypeMask &^ BindTypePhone,
 	}
 
 	tx, err := db.GetDB().Beginx()
@@ -42,7 +42,7 @@ func UnbindPhone(userId int64) (err error) {
 	}
 
 	// user 更新 item
-	stmt2, err := tx.PrepareNamed("update user set auth_types = auth_types&:not_auth_type where id=:user_id and verified=1 and auth_types&:not_auth_type<>0")
+	stmt2, err := tx.PrepareNamed("update user set bind_types = bind_types&:not_bind_type where id=:user_id and verified=1 and bind_types&:not_bind_type<>0")
 	if err != nil {
 		tx.Rollback()
 		return

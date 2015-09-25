@@ -22,11 +22,11 @@ func BindExistPhone(toUserId, fromUserId int64) (err error) {
 	para := struct {
 		ToUserId   int64    `sqlx:"to_user_id"`
 		FromUserId int64    `sqlx:"from_user_id"`
-		AuthType   AuthType `sqlx:"auth_type"`
+		BindType   BindType `sqlx:"bind_type"`
 	}{
 		ToUserId:   toUserId,
 		FromUserId: fromUserId,
-		AuthType:   AuthTypePhone,
+		BindType:   BindTypePhone,
 	}
 
 	tx, err := db.GetDB().Beginx()
@@ -35,7 +35,7 @@ func BindExistPhone(toUserId, fromUserId int64) (err error) {
 	}
 
 	// user 更新 ToUserId
-	stmt1, err := tx.PrepareNamed("update user set auth_types = auth_types|:auth_type where id=:to_user_id and verified=1 and auth_types&:auth_type=0")
+	stmt1, err := tx.PrepareNamed("update user set bind_types = bind_types|:bind_type where id=:to_user_id and verified=1 and bind_types&:bind_type=0")
 	if err != nil {
 		tx.Rollback()
 		return
@@ -52,7 +52,7 @@ func BindExistPhone(toUserId, fromUserId int64) (err error) {
 	}
 
 	// user 删除 FromUserId
-	stmt2, err := tx.PrepareNamed("delete from user where id=:from_user_id and verified=0 and auth_types=:auth_type")
+	stmt2, err := tx.PrepareNamed("delete from user where id=:from_user_id and verified=0 and bind_types=:bind_type")
 	if err != nil {
 		tx.Rollback()
 		return

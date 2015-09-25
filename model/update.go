@@ -12,14 +12,14 @@ func UpdateEmail(userId int64, email string) (err error) {
 	para := struct {
 		UserId   int64    `sqlx:"user_id"`
 		Email    string   `sqlx:"email"`
-		AuthType AuthType `sqlx:"auth_type"`
+		BindType BindType `sqlx:"bind_type"`
 	}{
 		UserId:   userId,
 		Email:    email,
-		AuthType: AuthTypeEmail,
+		BindType: BindTypeEmail,
 	}
 
-	stmt, err := db.GetNamedStmt("update user as A, user_email as B set B.nickname=:email, B.email=:email where A.id=:user_id and A.verified=1 and A.auth_types&:auth_type<>0 and B.user_id=A.id and B.verified=1")
+	stmt, err := db.GetNamedStmt("update user as A, user_email as B set B.nickname=:email, B.email=:email where A.id=:user_id and A.verified=1 and A.bind_types&:bind_type<>0 and B.user_id=A.id and B.verified=1")
 	if err != nil {
 		return
 	}
@@ -35,14 +35,14 @@ func UpdatePhone(userId int64, phone string) (err error) {
 	para := struct {
 		UserId   int64    `sqlx:"user_id"`
 		Phone    string   `sqlx:"phone"`
-		AuthType AuthType `sqlx:"auth_type"`
+		BindType BindType `sqlx:"bind_type"`
 	}{
 		UserId:   userId,
 		Phone:    phone,
-		AuthType: AuthTypePhone,
+		BindType: BindTypePhone,
 	}
 
-	stmt, err := db.GetNamedStmt("update user as A, user_phone as B set B.nickname=:phone, B.phone=:phone where A.id=:user_id and A.verified=1 and A.auth_types&:auth_type<>0 and B.user_id=A.id and B.verified=1")
+	stmt, err := db.GetNamedStmt("update user as A, user_phone as B set B.nickname=:phone, B.phone=:phone where A.id=:user_id and A.verified=1 and A.bind_types&:bind_type<>0 and B.user_id=A.id and B.verified=1")
 	if err != nil {
 		return
 	}
@@ -63,15 +63,15 @@ func UpdateQQ(userId int64, openid, nickname string) (err error) {
 		UserId   int64    `sqlx:"user_id"`
 		OpenId   string   `sqlx:"openid"`
 		Nickname string   `sqlx:"nickname"`
-		AuthType AuthType `sqlx:"auth_type"`
+		BindType BindType `sqlx:"bind_type"`
 	}{
 		UserId:   userId,
 		OpenId:   openid,
 		Nickname: nickname,
-		AuthType: AuthTypeQQ,
+		BindType: BindTypeQQ,
 	}
 
-	stmt, err := db.GetNamedStmt("update user as A, user_qq as B set B.nickname=:nickname, B.openid=:openid where A.id=:user_id and A.verified=1 and A.auth_types&:auth_type<>0 and B.user_id=A.id and B.verified=1")
+	stmt, err := db.GetNamedStmt("update user as A, user_qq as B set B.nickname=:nickname, B.openid=:openid where A.id=:user_id and A.verified=1 and A.bind_types&:bind_type<>0 and B.user_id=A.id and B.verified=1")
 	if err != nil {
 		return
 	}
@@ -92,15 +92,15 @@ func UpdateWechat(userId int64, openid, nickname string) (err error) {
 		UserId   int64    `sqlx:"user_id"`
 		OpenId   string   `sqlx:"openid"`
 		Nickname string   `sqlx:"nickname"`
-		AuthType AuthType `sqlx:"auth_type"`
+		BindType BindType `sqlx:"bind_type"`
 	}{
 		UserId:   userId,
 		OpenId:   openid,
 		Nickname: nickname,
-		AuthType: AuthTypeWechat,
+		BindType: BindTypeWechat,
 	}
 
-	stmt, err := db.GetNamedStmt("update user as A, user_wechat as B set B.nickname=:nickname, B.openid=:openid where A.id=:user_id and A.verified=1 and A.auth_types&:auth_type<>0 and B.user_id=A.id and B.verified=1")
+	stmt, err := db.GetNamedStmt("update user as A, user_wechat as B set B.nickname=:nickname, B.openid=:openid where A.id=:user_id and A.verified=1 and A.bind_types&:bind_type<>0 and B.user_id=A.id and B.verified=1")
 	if err != nil {
 		return
 	}
@@ -121,15 +121,15 @@ func UpdateWeibo(userId int64, openid, nickname string) (err error) {
 		UserId   int64    `sqlx:"user_id"`
 		OpenId   string   `sqlx:"openid"`
 		Nickname string   `sqlx:"nickname"`
-		AuthType AuthType `sqlx:"auth_type"`
+		BindType BindType `sqlx:"bind_type"`
 	}{
 		UserId:   userId,
 		OpenId:   openid,
 		Nickname: nickname,
-		AuthType: AuthTypeWeibo,
+		BindType: BindTypeWeibo,
 	}
 
-	stmt, err := db.GetNamedStmt("update user as A, user_weibo as B set B.nickname=:nickname, B.openid=:openid where A.id=:user_id and A.verified=1 and A.auth_types&:auth_type<>0 and B.user_id=A.id and B.verified=1")
+	stmt, err := db.GetNamedStmt("update user as A, user_weibo as B set B.nickname=:nickname, B.openid=:openid where A.id=:user_id and A.verified=1 and A.bind_types&:bind_type<>0 and B.user_id=A.id and B.verified=1")
 	if err != nil {
 		return
 	}

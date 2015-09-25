@@ -15,11 +15,11 @@ func BindPhone(userId int64, phone string) (err error) {
 	para := struct {
 		UserId   int64    `sqlx:"user_id"`
 		Phone    string   `sqlx:"phone"`
-		AuthType AuthType `sqlx:"auth_type"`
+		BindType BindType `sqlx:"bind_type"`
 	}{
 		UserId:   userId,
 		Phone:    phone,
-		AuthType: AuthTypePhone,
+		BindType: BindTypePhone,
 	}
 
 	tx, err := db.GetDB().Beginx()
@@ -39,7 +39,7 @@ func BindPhone(userId int64, phone string) (err error) {
 	}
 
 	// user 更新 item
-	stmt2, err := tx.PrepareNamed("update user set auth_types = auth_types|:auth_type where id=:user_id and verified=1 and auth_types&:auth_type=0")
+	stmt2, err := tx.PrepareNamed("update user set bind_types = bind_types|:bind_type where id=:user_id and verified=1 and bind_types&:bind_type=0")
 	if err != nil {
 		tx.Rollback()
 		return

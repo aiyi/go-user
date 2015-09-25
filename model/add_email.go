@@ -3,6 +3,8 @@ package model
 import (
 	"time"
 
+	"github.com/chanxuehong/util/random"
+
 	"github.com/aiyi/go-user/db"
 	"github.com/aiyi/go-user/userid"
 )
@@ -18,19 +20,21 @@ func AddEmail(email string, password, salt []byte, timestamp int64) (userId int6
 	}
 
 	para := struct {
-		UserId     int64    `sqlx:"user_id"`
-		AuthType   AuthType `sqlx:"auth_type"`
-		Email      string   `sqlx:"email"`
-		Password   []byte   `sqlx:"password"`
-		Salt       []byte   `sqlx:"salt"`
-		CreateTime int64    `sqlx:"create_time"`
+		UserId      int64    `sqlx:"user_id"`
+		BindType    BindType `sqlx:"bind_type"`
+		Email       string   `sqlx:"email"`
+		Password    []byte   `sqlx:"password"`
+		PasswordTag []byte   `sqlx:"password_tag"`
+		Salt        []byte   `sqlx:"salt"`
+		CreateTime  int64    `sqlx:"create_time"`
 	}{
-		UserId:     userId,
-		AuthType:   AuthTypeEmail,
-		Email:      email,
-		Password:   password,
-		Salt:       salt,
-		CreateTime: timestamp,
+		UserId:      userId,
+		BindType:    BindTypeEmail,
+		Email:       email,
+		Password:    password,
+		PasswordTag: random.NewRandomEx(),
+		Salt:        salt,
+		CreateTime:  timestamp,
 	}
 
 	tx, err := db.GetDB().Beginx()
@@ -50,7 +54,7 @@ func AddEmail(email string, password, salt []byte, timestamp int64) (userId int6
 	}
 
 	// user 表增加一个 item
-	stmt2, err := tx.PrepareNamed("insert into user(id, auth_types, password, salt, create_time, verified) values(:user_id, :auth_type, :password, :salt, :create_time, 0)")
+	stmt2, err := tx.PrepareNamed("insert into user(id, bind_types, password, password_tag, salt, create_time, verified) values(:user_id, :bind_type, :password, :password_tag, :salt, :create_time, 0)")
 	if err != nil {
 		tx.Rollback()
 		return
