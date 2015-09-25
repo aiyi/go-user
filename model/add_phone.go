@@ -10,7 +10,7 @@ import (
 )
 
 // password, salt 可以为 nil
-func AddPhone(phone string, password, salt []byte, timestamp int64) (userId int64, err error) {
+func AddByPhone(phone string, password, salt []byte, timestamp int64) (userId int64, err error) {
 	userId, err = userid.GetId()
 	if err != nil {
 		return

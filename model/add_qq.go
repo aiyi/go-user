@@ -9,7 +9,7 @@ import (
 	"github.com/aiyi/go-user/userid"
 )
 
-func AddQQ(openid, nickname string, timestamp int64) (userId int64, err error) {
+func AddByQQ(openid, nickname string, timestamp int64) (userId int64, err error) {
 	userId, err = userid.GetId()
 	if err != nil {
 		return

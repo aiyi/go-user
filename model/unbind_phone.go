@@ -11,13 +11,13 @@ import (
 //  1. 该用户存在并且 verified
 //  2. 该用户除了手机认证还有别的认证
 func UnbindPhone(userId int64) (err error) {
-	if err = removeUserFromCache(userId); err != nil {
+	if err = removeFromCache(userId); err != nil {
 		return
 	}
 	if err = unbindPhone(userId); err != nil {
 		return
 	}
-	return syncUserToCache(userId)
+	return syncToCache(userId)
 }
 
 func unbindPhone(userId int64) (err error) {

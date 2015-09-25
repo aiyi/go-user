@@ -15,16 +15,16 @@ import (
 //  4. toUserId 未绑定微信
 //  5. fromUserId 是微信新注册账户
 func BindExistWechat(toUserId, fromUserId int64) (err error) {
-	if err = removeUserFromCache(toUserId); err != nil {
+	if err = removeFromCache(toUserId); err != nil {
 		return
 	}
-	if err = removeUserFromCache(fromUserId); err != nil {
+	if err = removeFromCache(fromUserId); err != nil {
 		return
 	}
 	if err = bindExistWechat(toUserId, fromUserId); err != nil {
 		return
 	}
-	return syncUserToCache(toUserId)
+	return syncToCache(toUserId)
 }
 
 func bindExistWechat(toUserId, fromUserId int64) (err error) {

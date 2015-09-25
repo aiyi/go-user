@@ -12,13 +12,13 @@ import (
 //  2. 该用户未绑定邮箱
 //  3. 该邮箱未绑定用户
 func BindEmail(userId int64, email string) (err error) {
-	if err = removeUserFromCache(userId); err != nil {
+	if err = removeFromCache(userId); err != nil {
 		return
 	}
 	if err = bindEmail(userId, email); err != nil {
 		return
 	}
-	return syncUserToCache(userId)
+	return syncToCache(userId)
 }
 
 func bindEmail(userId int64, email string) (err error) {

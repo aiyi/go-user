@@ -12,13 +12,13 @@ import (
 //  2. 该用户未绑定QQ
 //  3. 该QQ未绑定用户
 func BindQQ(userId int64, openid, nickname string) (err error) {
-	if err = removeUserFromCache(userId); err != nil {
+	if err = removeFromCache(userId); err != nil {
 		return
 	}
 	if err = bindQQ(userId, openid, nickname); err != nil {
 		return
 	}
-	return syncUserToCache(userId)
+	return syncToCache(userId)
 }
 
 func bindQQ(userId int64, openid, nickname string) (err error) {

@@ -15,16 +15,16 @@ import (
 //  4. toUserId 未绑定QQ
 //  5. fromUserId 是QQ新注册账户
 func BindExistQQ(toUserId, fromUserId int64) (err error) {
-	if err = removeUserFromCache(toUserId); err != nil {
+	if err = removeFromCache(toUserId); err != nil {
 		return
 	}
-	if err = removeUserFromCache(fromUserId); err != nil {
+	if err = removeFromCache(fromUserId); err != nil {
 		return
 	}
 	if err = bindExistQQ(toUserId, fromUserId); err != nil {
 		return
 	}
-	return syncUserToCache(toUserId)
+	return syncToCache(toUserId)
 }
 
 func bindExistQQ(toUserId, fromUserId int64) (err error) {

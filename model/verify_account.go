@@ -6,13 +6,13 @@ import (
 
 // 确认邮箱注册新账户
 func VerifyEmail(userId int64) (err error) {
-	if err = removeUserFromCache(userId); err != nil {
+	if err = removeFromCache(userId); err != nil {
 		return
 	}
 	if err = verifyEmail(userId); err != nil {
 		return
 	}
-	return syncUserToCache(userId)
+	return syncToCache(userId)
 }
 
 func verifyEmail(userId int64) (err error) {
@@ -26,13 +26,13 @@ func verifyEmail(userId int64) (err error) {
 
 // 确认手机注册新账户
 func VerifyPhone(userId int64) (err error) {
-	if err = removeUserFromCache(userId); err != nil {
+	if err = removeFromCache(userId); err != nil {
 		return
 	}
 	if err = verifyPhone(userId); err != nil {
 		return
 	}
-	return syncUserToCache(userId)
+	return syncToCache(userId)
 }
 
 func verifyPhone(userId int64) (err error) {
@@ -46,13 +46,13 @@ func verifyPhone(userId int64) (err error) {
 
 // 确认QQ注册新账户
 func VerifyQQ(userId int64) (err error) {
-	if err = removeUserFromCache(userId); err != nil {
+	if err = removeFromCache(userId); err != nil {
 		return
 	}
 	if err = verifyQQ(userId); err != nil {
 		return
 	}
-	return syncUserToCache(userId)
+	return syncToCache(userId)
 }
 
 func verifyQQ(userId int64) (err error) {
@@ -66,13 +66,13 @@ func verifyQQ(userId int64) (err error) {
 
 // 确认微信注册新账户
 func VerifyWechat(userId int64) (err error) {
-	if err = removeUserFromCache(userId); err != nil {
+	if err = removeFromCache(userId); err != nil {
 		return
 	}
 	if err = verifyWechat(userId); err != nil {
 		return
 	}
-	return syncUserToCache(userId)
+	return syncToCache(userId)
 }
 
 func verifyWechat(userId int64) (err error) {
@@ -86,13 +86,13 @@ func verifyWechat(userId int64) (err error) {
 
 // 确认微博注册新账户
 func VerifyWeibo(userId int64) (err error) {
-	if err = removeUserFromCache(userId); err != nil {
+	if err = removeFromCache(userId); err != nil {
 		return
 	}
 	if err = verifyWeibo(userId); err != nil {
 		return
 	}
-	return syncUserToCache(userId)
+	return syncToCache(userId)
 }
 
 func verifyWeibo(userId int64) (err error) {

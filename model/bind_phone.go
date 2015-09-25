@@ -12,13 +12,13 @@ import (
 //  2. 该用户未绑定手机
 //  3. 该手机未绑定用户
 func BindPhone(userId int64, phone string) (err error) {
-	if err = removeUserFromCache(userId); err != nil {
+	if err = removeFromCache(userId); err != nil {
 		return
 	}
 	if err = bindPhone(userId, phone); err != nil {
 		return
 	}
-	return syncUserToCache(userId)
+	return syncToCache(userId)
 }
 
 func bindPhone(userId int64, phone string) (err error) {
