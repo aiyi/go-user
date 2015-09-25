@@ -9,6 +9,9 @@ import (
 	"github.com/aiyi/go-user/userid"
 )
 
+// 通过 微博 注册一个账户.
+//  如果 nickname 为空, 则默认为 openid
+//  如果 timestamp == 0 则默认使用当前时间
 func AddByWeibo(openid, nickname string, timestamp int64) (userId int64, err error) {
 	userId, err = userid.GetId()
 	if err != nil {

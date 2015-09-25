@@ -9,13 +9,19 @@ import (
 	"github.com/aiyi/go-user/userid"
 )
 
-// password, salt 可以为 nil
-func AddByEmail(email string, password, salt []byte, timestamp int64) (userId int64, err error) {
+// 通过 邮箱 注册一个账户.
+//  如果 nickname 为空, 则默认为 email
+//  验证码注册时, password, salt 可以为 nil
+//  如果 timestamp == 0 则默认使用当前时间
+func AddByEmail(email, nickname string, password, salt []byte, timestamp int64) (userId int64, err error) {
 	userId, err = userid.GetId()
 	if err != nil {
 		return
 	}
 
+	if nickname == "" {
+		nickname = email
+	}
 	if password == nil {
 		password = emptyByteSlice
 	}
@@ -30,6 +36,7 @@ func AddByEmail(email string, password, salt []byte, timestamp int64) (userId in
 		UserId      int64    `sqlx:"user_id"`
 		BindType    BindType `sqlx:"bind_type"`
 		Email       string   `sqlx:"email"`
+		Nickname    string   `sqlx:"nickname"`
 		Password    []byte   `sqlx:"password"`
 		PasswordTag []byte   `sqlx:"password_tag"`
 		Salt        []byte   `sqlx:"salt"`
@@ -38,6 +45,7 @@ func AddByEmail(email string, password, salt []byte, timestamp int64) (userId in
 		UserId:      userId,
 		BindType:    BindTypeEmail,
 		Email:       email,
+		Nickname:    nickname,
 		Password:    password,
 		PasswordTag: random.NewRandomEx(),
 		Salt:        salt,
@@ -61,7 +69,7 @@ func AddByEmail(email string, password, salt []byte, timestamp int64) (userId in
 	}
 
 	// user 表增加一个 item
-	stmt2, err := tx.PrepareNamed("insert into user(id, nickname, bind_types, password, password_tag, salt, create_time, verified) values(:user_id, :email, :bind_type, :password, :password_tag, :salt, :create_time, 0)")
+	stmt2, err := tx.PrepareNamed("insert into user(id, nickname, bind_types, password, password_tag, salt, create_time, verified) values(:user_id, :nickname, :bind_type, :password, :password_tag, :salt, :create_time, 0)")
 	if err != nil {
 		tx.Rollback()
 		return
