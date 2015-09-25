@@ -43,18 +43,18 @@ func AddByEmail(email string, password, salt []byte, timestamp int64) (userId in
 	}
 
 	// user_email 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_email(user_id, nickname, email, verified) values(?, ?, ?, 0)")
+	stmt1, err := tx.Prepare("insert into user_email(user_id, email, verified) values(?, ?, 0)")
 	if err != nil {
 		tx.Rollback()
 		return
 	}
-	if _, err = stmt1.Exec(para.UserId, para.Email, para.Email); err != nil {
+	if _, err = stmt1.Exec(para.UserId, para.Email); err != nil {
 		tx.Rollback()
 		return
 	}
 
 	// user 表增加一个 item
-	stmt2, err := tx.PrepareNamed("insert into user(id, bind_types, password, password_tag, salt, create_time, verified) values(:user_id, :bind_type, :password, :password_tag, :salt, :create_time, 0)")
+	stmt2, err := tx.PrepareNamed("insert into user(id, nickname, bind_types, password, password_tag, salt, create_time, verified) values(:user_id, :email, :bind_type, :password, :password_tag, :salt, :create_time, 0)")
 	if err != nil {
 		tx.Rollback()
 		return

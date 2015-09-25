@@ -11,30 +11,24 @@ import (
 //  1. 该用户存在并且 verified
 //  2. 该用户未绑定微信
 //  3. 该微信未绑定用户
-func BindWechat(userId int64, openid, nickname string) (err error) {
+func BindWechat(userId int64, openid string) (err error) {
 	if err = removeFromCache(userId); err != nil {
 		return
 	}
-	if err = bindWechat(userId, openid, nickname); err != nil {
+	if err = bindWechat(userId, openid); err != nil {
 		return
 	}
 	return syncToCache(userId)
 }
 
-func bindWechat(userId int64, openid, nickname string) (err error) {
-	if nickname == "" {
-		nickname = openid
-	}
-
+func bindWechat(userId int64, openid string) (err error) {
 	para := struct {
 		UserId   int64    `sqlx:"user_id"`
 		OpenId   string   `sqlx:"openid"`
-		Nickname string   `sqlx:"nickname"`
 		BindType BindType `sqlx:"bind_type"`
 	}{
 		UserId:   userId,
 		OpenId:   openid,
-		Nickname: nickname,
 		BindType: BindTypeWechat,
 	}
 
@@ -44,12 +38,12 @@ func bindWechat(userId int64, openid, nickname string) (err error) {
 	}
 
 	// user_wechat 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_wechat(user_id, nickname, openid, verified) values(?, ?, ?, 1)")
+	stmt1, err := tx.Prepare("insert into user_wechat(user_id, openid, verified) values(?, ?, 1)")
 	if err != nil {
 		tx.Rollback()
 		return
 	}
-	if _, err = stmt1.Exec(para.UserId, para.Nickname, para.OpenId); err != nil {
+	if _, err = stmt1.Exec(para.UserId, para.OpenId); err != nil {
 		tx.Rollback()
 		return
 	}

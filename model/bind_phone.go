@@ -38,12 +38,12 @@ func bindPhone(userId int64, phone string) (err error) {
 	}
 
 	// user_phone 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_phone(user_id, nickname, phone, verified) values(?, ?, ?, 1)")
+	stmt1, err := tx.Prepare("insert into user_phone(user_id, phone, verified) values(?, ?, 1)")
 	if err != nil {
 		tx.Rollback()
 		return
 	}
-	if _, err = stmt1.Exec(para.UserId, para.Phone, para.Phone); err != nil {
+	if _, err = stmt1.Exec(para.UserId, para.Phone); err != nil {
 		tx.Rollback()
 		return
 	}

@@ -45,121 +45,81 @@ func Get(userId int64) (user *User, err error) {
 }
 
 func GetByEmail(email string) (user *User, err error) {
-	stmt, err := db.GetStmt("select A.id, A.nickname, A.bind_types, A.password, A.password_tag, A.salt, A.create_time, A.verified, B.nickname as sub_nickname from user as A, user_email as B where B.email=? and A.id=B.user_id and A.verified=B.verified and A.bind_types&?<>0")
+	stmt, err := db.GetStmt("select A.id, A.nickname, A.bind_types, A.password, A.password_tag, A.salt, A.create_time, A.verified from user as A, user_email as B where B.email=? and A.id=B.user_id and A.verified=B.verified and A.bind_types&?<>0")
 	if err != nil {
 		return
 	}
 
-	var userx struct {
-		User
-		SubNickname string `sqlx:"sub_nickname"` // 子表的 nickname
-	}
-	if err = stmt.Get(&userx, email, BindTypeEmail); err != nil {
+	user = &User{}
+	if err = stmt.Get(user, email, BindTypeEmail); err != nil {
 		if err == sql.ErrNoRows {
 			err = ErrNotFound
 		}
 		return
 	}
-	if userx.Nickname == "" {
-		userx.Nickname = userx.SubNickname
-	}
-
-	user = &userx.User
 	return
 }
 
 func GetByPhone(phone string) (user *User, err error) {
-	stmt, err := db.GetStmt("select A.id, A.nickname, A.bind_types, A.password, A.password_tag, A.salt, A.create_time, A.verified, B.nickname as sub_nickname from user as A, user_phone as B where B.phone=? and A.id=B.user_id and A.verified=B.verified and A.bind_types&?<>0")
+	stmt, err := db.GetStmt("select A.id, A.nickname, A.bind_types, A.password, A.password_tag, A.salt, A.create_time, A.verified from user as A, user_phone as B where B.phone=? and A.id=B.user_id and A.verified=B.verified and A.bind_types&?<>0")
 	if err != nil {
 		return
 	}
 
-	var userx struct {
-		User
-		SubNickname string `sqlx:"sub_nickname"` // 子表的 nickname
-	}
-	if err = stmt.Get(&userx, phone, BindTypePhone); err != nil {
+	user = &User{}
+	if err = stmt.Get(user, phone, BindTypePhone); err != nil {
 		if err == sql.ErrNoRows {
 			err = ErrNotFound
 		}
 		return
 	}
-	if userx.Nickname == "" {
-		userx.Nickname = userx.SubNickname
-	}
-
-	user = &userx.User
 	return
 }
 
 func GetByQQ(openid string) (user *User, err error) {
-	stmt, err := db.GetStmt("select A.id, A.nickname, A.bind_types, A.password, A.password_tag, A.salt, A.create_time, A.verified, B.nickname as sub_nickname from user as A, user_qq as B where B.openid=? and A.id=B.user_id and A.verified=B.verified and A.bind_types&?<>0")
+	stmt, err := db.GetStmt("select A.id, A.nickname, A.bind_types, A.password, A.password_tag, A.salt, A.create_time, A.verified from user as A, user_qq as B where B.openid=? and A.id=B.user_id and A.verified=B.verified and A.bind_types&?<>0")
 	if err != nil {
 		return
 	}
 
-	var userx struct {
-		User
-		SubNickname string `sqlx:"sub_nickname"` // 子表的 nickname
-	}
-	if err = stmt.Get(&userx, openid, BindTypeQQ); err != nil {
+	user = &User{}
+	if err = stmt.Get(user, openid, BindTypeQQ); err != nil {
 		if err == sql.ErrNoRows {
 			err = ErrNotFound
 		}
 		return
 	}
-	if userx.Nickname == "" {
-		userx.Nickname = userx.SubNickname
-	}
-
-	user = &userx.User
 	return
 }
 
 func GetByWechat(openid string) (user *User, err error) {
-	stmt, err := db.GetStmt("select A.id, A.nickname, A.bind_types, A.password, A.password_tag, A.salt, A.create_time, A.verified, B.nickname as sub_nickname from user as A, user_wechat as B where B.openid=? and A.id=B.user_id and A.verified=B.verified and A.bind_types&?<>0")
+	stmt, err := db.GetStmt("select A.id, A.nickname, A.bind_types, A.password, A.password_tag, A.salt, A.create_time, A.verified from user as A, user_wechat as B where B.openid=? and A.id=B.user_id and A.verified=B.verified and A.bind_types&?<>0")
 	if err != nil {
 		return
 	}
 
-	var userx struct {
-		User
-		SubNickname string `sqlx:"sub_nickname"` // 子表的 nickname
-	}
-	if err = stmt.Get(&userx, openid, BindTypeWechat); err != nil {
+	user = &User{}
+	if err = stmt.Get(user, openid, BindTypeWechat); err != nil {
 		if err == sql.ErrNoRows {
 			err = ErrNotFound
 		}
 		return
 	}
-	if userx.Nickname == "" {
-		userx.Nickname = userx.SubNickname
-	}
-
-	user = &userx.User
 	return
 }
 
 func GetByWeibo(openid string) (user *User, err error) {
-	stmt, err := db.GetStmt("select A.id, A.nickname, A.bind_types, A.password, A.password_tag, A.salt, A.create_time, A.verified, B.nickname as sub_nickname from user as A, user_weibo as B where B.openid=? and A.id=B.user_id and A.verified=B.verified and A.bind_types&?<>0")
+	stmt, err := db.GetStmt("select A.id, A.nickname, A.bind_types, A.password, A.password_tag, A.salt, A.create_time, A.verified from user as A, user_weibo as B where B.openid=? and A.id=B.user_id and A.verified=B.verified and A.bind_types&?<>0")
 	if err != nil {
 		return
 	}
 
-	var userx struct {
-		User
-		SubNickname string `sqlx:"sub_nickname"` // 子表的 nickname
-	}
-	if err = stmt.Get(&userx, openid, BindTypeWeibo); err != nil {
+	user = &User{}
+	if err = stmt.Get(user, openid, BindTypeWeibo); err != nil {
 		if err == sql.ErrNoRows {
 			err = ErrNotFound
 		}
 		return
 	}
-	if userx.Nickname == "" {
-		userx.Nickname = userx.SubNickname
-	}
-
-	user = &userx.User
 	return
 }

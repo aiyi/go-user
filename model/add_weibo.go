@@ -48,18 +48,18 @@ func AddByWeibo(openid, nickname string, timestamp int64) (userId int64, err err
 	}
 
 	// user_weibo 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_weibo(user_id, nickname, openid, verified) values(?, ?, ?, 0)")
+	stmt1, err := tx.Prepare("insert into user_weibo(user_id, openid, verified) values(?, ?, 0)")
 	if err != nil {
 		tx.Rollback()
 		return
 	}
-	if _, err = stmt1.Exec(para.UserId, para.Nickname, para.OpenId); err != nil {
+	if _, err = stmt1.Exec(para.UserId, para.OpenId); err != nil {
 		tx.Rollback()
 		return
 	}
 
 	// user 表增加一个 item
-	stmt2, err := tx.PrepareNamed("insert into user(id, bind_types, password, password_tag, salt, create_time, verified) values(:user_id, :bind_type, :password, :password_tag, :salt, :create_time, 0)")
+	stmt2, err := tx.PrepareNamed("insert into user(id, nickname, bind_types, password, password_tag, salt, create_time, verified) values(:user_id, :nickname, :bind_type, :password, :password_tag, :salt, :create_time, 0)")
 	if err != nil {
 		tx.Rollback()
 		return

@@ -38,12 +38,12 @@ func bindEmail(userId int64, email string) (err error) {
 	}
 
 	// user_email 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_email(user_id, nickname, email, verified) values(?, ?, ?, 1)")
+	stmt1, err := tx.Prepare("insert into user_email(user_id, email, verified) values(?, ?, 1)")
 	if err != nil {
 		tx.Rollback()
 		return
 	}
-	if _, err = stmt1.Exec(para.UserId, para.Email, para.Email); err != nil {
+	if _, err = stmt1.Exec(para.UserId, para.Email); err != nil {
 		tx.Rollback()
 		return
 	}
