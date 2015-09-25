@@ -7,27 +7,27 @@ import (
 	"github.com/aiyi/go-user/db"
 )
 
-// 绑定手机新注册账户到已经存在的账户, 密码以原账户为准.
+// 绑定手机新注册账户到指定账户, 密码以指定账户为准.
 //  调用该函数前, 请确认:
 //  1. toUserId != userId
 //  2. toUserId 存在并且 verified
 //  3. userId 存在并且没有 verified
 //  4. toUserId 未绑定手机
 //  5. userId 是手机新注册账户
-func BindPhoneTo(toUserId, userId int64) (err error) {
+func BindPhoneUserTo(toUserId, userId int64) (err error) {
 	if err = removeFromCache(toUserId); err != nil {
 		return
 	}
 	if err = removeFromCache(userId); err != nil {
 		return
 	}
-	if err = bindPhoneTo(toUserId, userId); err != nil {
+	if err = bindPhoneUserTo(toUserId, userId); err != nil {
 		return
 	}
 	return syncToCache(toUserId)
 }
 
-func bindPhoneTo(toUserId, userId int64) (err error) {
+func bindPhoneUserTo(toUserId, userId int64) (err error) {
 	if toUserId == userId {
 		return errors.New("toUserId 不能等于 userId")
 	}
