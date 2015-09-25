@@ -9,12 +9,19 @@ import (
 	"github.com/aiyi/go-user/userid"
 )
 
+// password, salt 可以为 nil
 func AddByEmail(email string, password, salt []byte, timestamp int64) (userId int64, err error) {
 	userId, err = userid.GetId()
 	if err != nil {
 		return
 	}
 
+	if password == nil {
+		password = emptyByteSlice
+	}
+	if salt == nil {
+		salt = emptyByteSlice
+	}
 	if timestamp == 0 {
 		timestamp = time.Now().Unix()
 	}
