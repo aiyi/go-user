@@ -1,6 +1,6 @@
 package model
 
-type BindType int64 // 位图, 保险起见最多使用低 63 位
+type BindType int64 // 位图, 使用低60位
 
 const (
 	BindTypeEmail  BindType = 1 << iota // 邮箱
@@ -9,7 +9,7 @@ const (
 	BindTypeWechat                      // 微信
 	BindTypeWeibo                       // 微博
 
-	BindTypeMask = BindType(int64(-1) ^ (int64(-1) << 63))
+	BindTypeMask = BindType(int64(-1) ^ (int64(-1) << 60))
 )
 
 var emptyByteSlice = []byte{}
