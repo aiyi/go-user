@@ -4,8 +4,6 @@ import (
 	"github.com/bradfitz/gomemcache/memcache"
 )
 
-var client *memcache.Client
-
 func init() {
 	servers, err := getServerList()
 	if err != nil {
@@ -14,6 +12,8 @@ func init() {
 
 	client = memcache.New(servers...)
 }
+
+var client *memcache.Client
 
 func Client() *memcache.Client {
 	return client
