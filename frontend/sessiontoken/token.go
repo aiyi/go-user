@@ -34,7 +34,7 @@ type SessionToken struct {
 	ExpRefresh    int64  `json:"exp_refresh"`   // 通过该 token 换取新的 token 的截至时间, 固定值, 不会变化
 }
 
-// url_base64(json(token)) + "." + hex(sign(base64_str))
+// trim(url_base64(json(token))) + "." + hex(hmac-sha256(base64_str))
 func (token *SessionToken) Encode(securityKey []byte) ([]byte, error) {
 	const signatureLen = 64 // hmac-sha256
 
@@ -62,7 +62,7 @@ func (token *SessionToken) Encode(securityKey []byte) ([]byte, error) {
 
 var tokenBytesSplitSep = []byte{'.'}
 
-// url_base64(json(token)) + "." + hex(sign(base64_str))
+// trim(url_base64(json(token))) + "." + hex(hmac-sha256(base64_str))
 func (token *SessionToken) Decode(tokenBytes []byte, securityKey []byte) error {
 	const signatureLen = 64 // hmac-sha256
 
@@ -70,31 +70,31 @@ func (token *SessionToken) Decode(tokenBytes []byte, securityKey []byte) error {
 	if len(bytesArray) < 2 {
 		return errors.New("invalid token bytes")
 	}
-	if len(bytesArray[1]) != signatureLen { // hmac-sha256
+	if len(bytesArray[1]) != signatureLen {
 		return errors.New("invalid token bytes, signature mismatch")
 	}
 
+	// 验证签名
 	Hash := hmac.New(sha256.New, securityKey)
-	Signatrue := make([]byte, signatureLen)
 	Hash.Write(bytesArray[0])
+	Signatrue := make([]byte, signatureLen)
 	hex.Encode(Signatrue, Hash.Sum(nil))
 
 	if !bytes.Equal(Signatrue, bytesArray[1]) {
 		return errors.New("invalid token bytes, signature mismatch")
 	}
 
-	base64BytesLen := len(bytesArray[0])
-	var temp [4]byte
-	copy(temp[:], tokenBytes[base64BytesLen:])
+	// 解码
+	temp := Signatrue[:4]                       // Signatrue 不再使用, 利用其空间
+	copy(temp, tokenBytes[len(bytesArray[0]):]) // 保护 tokenBytes
 
-	bytesArray[0] = base64Pad(bytesArray[0])
-	buf := make([]byte, base64.URLEncoding.DecodedLen(len(bytesArray[0])))
-	n, err := base64.URLEncoding.Decode(buf, bytesArray[0])
+	base64Bytes := base64Pad(bytesArray[0])
+	buf := make([]byte, base64.URLEncoding.DecodedLen(len(base64Bytes)))
+	n, err := base64.URLEncoding.Decode(buf, base64Bytes)
+	copy(tokenBytes[len(bytesArray[0]):], temp) // 恢复 tokenBytes
 	if err != nil {
 		return err
 	}
-
-	copy(tokenBytes[base64BytesLen:], temp[:])
 
 	return json.Unmarshal(buf[:n], token)
 }
