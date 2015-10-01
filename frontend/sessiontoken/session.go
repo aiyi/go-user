@@ -12,9 +12,9 @@ import (
 )
 
 type Session struct {
-	SessionTokenCopy SessionToken `json:"session_token_copy"`
-	EmailCaptcha     string       `json:"email_captcha"`
-	PhoneCaptcha     string       `json:"phone_captcha"`
+	SessionTokenCopy SessionToken `json:"session_token_copy"` // SessionToken 副本
+	EmailCaptcha     string       `json:"email_captcha"`      // 邮箱验证码
+	PhoneCaptcha     string       `json:"phone_captcha"`      // 短信验证码
 }
 
 // 获取 Session, 如果找不到返回 frontend.ErrNotFound.

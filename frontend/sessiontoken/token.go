@@ -25,7 +25,7 @@ type SessionToken struct {
 	SessionId string `json:"sid"`
 
 	// 以下为 token 相关部分
-	Id            string `json:"id"`            // token 的标识, 每次刷新 token 改变此值
+	TokenId       string `json:"token_id"`      // token 的标识, 每次刷新 token 改变此值
 	Authenticated bool   `json:"authenticated"` // 是否是认证后的 token, 否则为临时 token
 	UserId        int64  `json:"user_id"`       // token 的拥有者
 	AuthType      string `json:"auth_type"`     // token 的认证类型
