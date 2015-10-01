@@ -18,12 +18,10 @@ func base64Trim(src []byte) (dst []byte) {
 // 在编码尾部填充 '=', 使之符合 base64 编码规则.
 //  dst 可能引用了 src 的空间.
 func base64Pad(src []byte) (dst []byte) {
-	srcLen := len(src)
-	n := srcLen & 0x3
+	n := len(src) & 0x3
 	if n == 0 {
 		return src
 	}
-	src = src[:srcLen:srcLen]
 	switch n = 4 - n; n {
 	case 1:
 		dst = append(src, "="...)

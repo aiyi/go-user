@@ -36,46 +36,56 @@ type SessionToken struct {
 
 // url_base64(json(token)) + "." + hex(sign(base64_str))
 func (token *SessionToken) Encode(securityKey []byte) ([]byte, error) {
+	const signatureLen = 64 // hmac-sha256
+
 	jsonBytes, err := json.Marshal(token)
 	if err != nil {
 		return nil, err
 	}
-	Hash := hmac.New(sha256.New, securityKey)
 
-	n1 := base64.URLEncoding.EncodedLen(len(jsonBytes))
-	n2 := hex.EncodedLen(Hash.Size())
-	buf := make([]byte, n1+1+n2)
+	base64BytesLen := base64.URLEncoding.EncodedLen(len(jsonBytes))
+	buf := make([]byte, base64BytesLen+1+signatureLen)
 
-	base64Bytes := buf[:n1]
+	base64Bytes := buf[:base64BytesLen]
 	base64.URLEncoding.Encode(base64Bytes, jsonBytes)
 	base64Bytes = base64Trim(base64Bytes)
 
-	n1 = len(base64Bytes)
-	buf[n1] = '.'
+	base64BytesLen = len(base64Bytes)
+	buf[base64BytesLen] = '.'
 
+	Hash := hmac.New(sha256.New, securityKey)
 	Hash.Write(base64Bytes)
-	hex.Encode(buf[n1+1:], Hash.Sum(nil))
+	hex.Encode(buf[base64BytesLen+1:], Hash.Sum(nil))
 
-	return buf[:n1+1+n2], nil
+	return buf[:base64BytesLen+1+signatureLen], nil
 }
 
 var tokenBytesSplitSep = []byte{'.'}
 
 // url_base64(json(token)) + "." + hex(sign(base64_str))
 func (token *SessionToken) Decode(tokenBytes []byte, securityKey []byte) error {
+	const signatureLen = 64 // hmac-sha256
+
 	bytesArray := bytes.Split(tokenBytes, tokenBytesSplitSep)
 	if len(bytesArray) < 2 {
-		return errors.New("invalid token input")
+		return errors.New("invalid token bytes")
+	}
+	if len(bytesArray[1]) != signatureLen { // hmac-sha256
+		return errors.New("invalid token bytes, signature mismatch")
 	}
 
 	Hash := hmac.New(sha256.New, securityKey)
-	HashSum := make([]byte, hex.EncodedLen(Hash.Size()))
+	Signatrue := make([]byte, signatureLen)
 	Hash.Write(bytesArray[0])
-	hex.Encode(HashSum, Hash.Sum(nil))
+	hex.Encode(Signatrue, Hash.Sum(nil))
 
-	if !bytes.Equal(HashSum, bytesArray[1]) {
-		return errors.New("invalid token input, signature mismatch")
+	if !bytes.Equal(Signatrue, bytesArray[1]) {
+		return errors.New("invalid token bytes, signature mismatch")
 	}
+
+	base64BytesLen := len(bytesArray[0])
+	var temp [4]byte
+	copy(temp[:], tokenBytes[base64BytesLen:])
 
 	bytesArray[0] = base64Pad(bytesArray[0])
 	buf := make([]byte, base64.URLEncoding.DecodedLen(len(bytesArray[0])))
@@ -83,6 +93,8 @@ func (token *SessionToken) Decode(tokenBytes []byte, securityKey []byte) error {
 	if err != nil {
 		return err
 	}
+
+	copy(tokenBytes[base64BytesLen:], temp[:])
 
 	return json.Unmarshal(buf[:n], token)
 }
