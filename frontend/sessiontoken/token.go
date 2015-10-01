@@ -8,8 +8,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
-
-	mybase64 "github.com/aiyi/go-user/base64"
 )
 
 const (
@@ -48,20 +46,37 @@ func (token *SessionToken) Encode(securityKey []byte) ([]byte, error) {
 	buf := make([]byte, n1+1+n2)
 
 	base64.URLEncoding.Encode(buf, jsonBytes)
-	base64Bytes := mybase64.Trim(buf[:n1])
+	buf[n1] = '|'
 
-	Hash.Write(base64Bytes)
-	HashSum := Hash.Sum(nil)
+	Hash.Write(buf[:n1])
+	hex.Encode(buf[n1+1:], Hash.Sum(nil))
 
-	base64Bytes = append(base64Bytes, '.')
-	base64Bytes = append(base64Bytes, hex.EncodeToString(HashSum)...)
-	return base64Bytes, nil
+	return buf, nil
 }
 
-func (token *SessionToken) Decode(bs []byte, securityKey []byte) error {
-	bytesArr := bytes.Split(bs, []byte{'.'})
+var tokenSplitByteSlice = []byte{'|'}
+
+func (token *SessionToken) Decode(tokenBytes []byte, securityKey []byte) error {
+	bytesArr := bytes.Split(tokenBytes, tokenSplitByteSlice)
 	if len(bytesArr) != 2 {
 		return errors.New("invalid token input")
 	}
-	return nil
+
+	Hash := hmac.New(sha1.New, securityKey)
+	Hash.Write(bytesArr[0])
+
+	HashSum := make([]byte, hex.EncodedLen(Hash.Size()))
+	hex.Encode(HashSum, Hash.Sum(nil))
+
+	if !bytes.Equal(HashSum, bytesArr[1]) {
+		return errors.New("invalid signature")
+	}
+
+	buf := make([]byte, base64.URLEncoding.DecodedLen(len(bytesArr[0])))
+	n, err := base64.URLEncoding.Decode(buf, bytesArr[0])
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(buf[:n], token)
 }
