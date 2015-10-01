@@ -8,8 +8,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
-
-	"github.com/chanxuehong/util/security"
 )
 
 const (
@@ -36,6 +34,7 @@ type SessionToken struct {
 	ExpRefresh    int64  `json:"exp_refresh"`   // 通过该 token 换取新的 token 的截至时间, 固定值, 不会变化
 }
 
+// url_base64(json(token)) + "|" + hex(sign(base64_str))
 func (token *SessionToken) Encode(securityKey []byte) ([]byte, error) {
 	jsonBytes, err := json.Marshal(token)
 	if err != nil {
@@ -49,7 +48,6 @@ func (token *SessionToken) Encode(securityKey []byte) ([]byte, error) {
 
 	base64.URLEncoding.Encode(buf, jsonBytes)
 	buf[n1] = '|'
-
 	Hash.Write(buf[:n1])
 	hex.Encode(buf[n1+1:], Hash.Sum(nil))
 
@@ -58,36 +56,27 @@ func (token *SessionToken) Encode(securityKey []byte) ([]byte, error) {
 
 var tokenBytesSplitSep = []byte{'|'}
 
+// url_base64(json(token)) + "|" + hex(sign(base64_str))
 func (token *SessionToken) Decode(tokenBytes []byte, securityKey []byte) error {
-	bytesArr := bytes.Split(tokenBytes, tokenBytesSplitSep)
-	if len(bytesArr) != 2 {
+	bytesArray := bytes.Split(tokenBytes, tokenBytesSplitSep)
+	if len(bytesArray) != 2 {
 		return errors.New("invalid token input")
 	}
 
 	Hash := hmac.New(sha1.New, securityKey)
-	Hash.Write(bytesArr[0])
-
 	HashSum := make([]byte, hex.EncodedLen(Hash.Size()))
+	Hash.Write(bytesArray[0])
 	hex.Encode(HashSum, Hash.Sum(nil))
 
-	buf := make([]byte, base64.URLEncoding.DecodedLen(len(bytesArr[0])))
-
-	if !security.SecureCompare(HashSum, bytesArr[1]) {
-		n, err := base64.URLEncoding.Decode(buf, bytesArr[0])
-		if err != nil {
-			return errors.New("invalid token input")
-		}
-		if err = json.Unmarshal(buf[:n], token); err != nil {
-			return errors.New("invalid token input")
-		}
-		return errors.New("invalid token input")
+	if !bytes.Equal(HashSum, bytesArray[1]) {
+		return errors.New("invalid token input, signature mismatch")
 	}
-	n, err := base64.URLEncoding.Decode(buf, bytesArr[0])
+
+	buf := make([]byte, base64.URLEncoding.DecodedLen(len(bytesArray[0])))
+	n, err := base64.URLEncoding.Decode(buf, bytesArray[0])
 	if err != nil {
 		return err
 	}
-	if err = json.Unmarshal(buf[:n], token); err != nil {
-		return err
-	}
-	return nil
+
+	return json.Unmarshal(buf[:n], token)
 }
