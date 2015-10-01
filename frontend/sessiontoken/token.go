@@ -8,6 +8,8 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+
+	"github.com/chanxuehong/util/security"
 )
 
 const (
@@ -54,10 +56,10 @@ func (token *SessionToken) Encode(securityKey []byte) ([]byte, error) {
 	return buf, nil
 }
 
-var tokenSplitByteSlice = []byte{'|'}
+var tokenBytesSplitSep = []byte{'|'}
 
 func (token *SessionToken) Decode(tokenBytes []byte, securityKey []byte) error {
-	bytesArr := bytes.Split(tokenBytes, tokenSplitByteSlice)
+	bytesArr := bytes.Split(tokenBytes, tokenBytesSplitSep)
 	if len(bytesArr) != 2 {
 		return errors.New("invalid token input")
 	}
@@ -68,15 +70,24 @@ func (token *SessionToken) Decode(tokenBytes []byte, securityKey []byte) error {
 	HashSum := make([]byte, hex.EncodedLen(Hash.Size()))
 	hex.Encode(HashSum, Hash.Sum(nil))
 
-	if !bytes.Equal(HashSum, bytesArr[1]) {
-		return errors.New("invalid signature")
-	}
-
 	buf := make([]byte, base64.URLEncoding.DecodedLen(len(bytesArr[0])))
+
+	if !security.SecureCompare(HashSum, bytesArr[1]) {
+		n, err := base64.URLEncoding.Decode(buf, bytesArr[0])
+		if err != nil {
+			return errors.New("invalid token input")
+		}
+		if err = json.Unmarshal(buf[:n], token); err != nil {
+			return errors.New("invalid token input")
+		}
+		return errors.New("invalid token input")
+	}
 	n, err := base64.URLEncoding.Decode(buf, bytesArr[0])
 	if err != nil {
 		return err
 	}
-
-	return json.Unmarshal(buf[:n], token)
+	if err = json.Unmarshal(buf[:n], token); err != nil {
+		return err
+	}
+	return nil
 }
