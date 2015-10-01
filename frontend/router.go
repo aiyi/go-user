@@ -5,6 +5,7 @@ import (
 )
 
 var (
-	Router     = gin.Default()
-	UserRouter = Router.Group("/user")
+	Engine      = gin.Default()
+	UserRouter  = Engine.Group("/user")
+	TokenRouter = UserRouter.Group("/token")
 )

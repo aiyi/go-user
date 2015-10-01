@@ -1,6 +1,6 @@
 package secondarymc
 
-// 临时 token 的 mc-key
-func TokenCacheKey(token string) string {
-	return "token2/" + token
+// 临时 session 的 mc-key
+func SessionCacheKey(sid string) string {
+	return "session2/" + sid
 }
