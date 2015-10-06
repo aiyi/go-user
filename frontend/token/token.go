@@ -47,9 +47,10 @@ func (token *SessionToken) Encode(securityKey []byte) ([]byte, error) {
 
 	base64Bytes := buf[:base64BytesLen]
 	base64.URLEncoding.Encode(base64Bytes, jsonBytes)
-	base64Bytes = base64Trim(base64Bytes)
 
+	base64Bytes = base64Trim(base64Bytes)
 	base64BytesLen = len(base64Bytes)
+
 	buf[base64BytesLen] = '.'
 
 	Hash := hmac.New(sha256.New, securityKey)
@@ -69,14 +70,11 @@ func (token *SessionToken) Decode(tokenBytes []byte, securityKey []byte) error {
 	if len(bytesArray) < 2 {
 		return errors.New("invalid token bytes")
 	}
-	if len(bytesArray[1]) != signatureLen {
-		return errors.New("invalid token bytes, signature mismatch")
-	}
 
 	// 验证签名
+	Signatrue := make([]byte, signatureLen)
 	Hash := hmac.New(sha256.New, securityKey)
 	Hash.Write(bytesArray[0])
-	Signatrue := make([]byte, signatureLen)
 	hex.Encode(Signatrue, Hash.Sum(nil))
 
 	if !bytes.Equal(Signatrue, bytesArray[1]) {
@@ -86,8 +84,8 @@ func (token *SessionToken) Decode(tokenBytes []byte, securityKey []byte) error {
 	// 解码
 	temp := Signatrue[:4]                       // Signatrue 不再使用, 利用其空间
 	copy(temp, tokenBytes[len(bytesArray[0]):]) // 保护 tokenBytes
-
 	base64Bytes := base64Pad(bytesArray[0])
+
 	buf := make([]byte, base64.URLEncoding.DecodedLen(len(base64Bytes)))
 	n, err := base64.URLEncoding.Decode(buf, base64Bytes)
 	copy(tokenBytes[len(bytesArray[0]):], temp) // 恢复 tokenBytes
