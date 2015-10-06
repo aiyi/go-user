@@ -81,14 +81,11 @@ func (token *SessionToken) Decode(tokenBytes []byte, securityKey []byte) error {
 	}
 
 	// 解码
-	temp := Signatrue[:4]                       // Signatrue 不再使用, 利用其空间
-	copy(temp, tokenBytes[len(bytesArray[0]):]) // 保护 tokenBytes
+	temp := Signatrue[:4]                             // Signatrue 不再使用, 利用其空间
+	copy(temp, tokenBytes[len(bytesArray[0]):])       // 保护 tokenBytes
+	defer copy(tokenBytes[len(bytesArray[0]):], temp) // 恢复 tokenBytes
+
 	base64Bytes := base64Pad(bytesArray[0])
-	buf := make([]byte, base64.URLEncoding.DecodedLen(len(base64Bytes)))
-	n, err := base64.URLEncoding.Decode(buf, base64Bytes)
-	copy(tokenBytes[len(bytesArray[0]):], temp) // 恢复 tokenBytes
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(buf[:n], token)
+	base64Reader := base64.NewDecoder(base64.URLEncoding, bytes.NewReader(base64Bytes))
+	return json.NewDecoder(base64Reader).Decode(token)
 }
