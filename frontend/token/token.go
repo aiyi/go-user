@@ -1,4 +1,4 @@
-package sessiontoken
+package token
 
 import (
 	"bytes"
@@ -11,6 +11,8 @@ import (
 )
 
 const (
+	AuthTypeGuest = "guest" // 游客
+
 	AuthTypeEmailPassword = "email_password" // 邮箱+密码
 	AuthTypeEmailCaptcha  = "email_captcha"  // 邮箱+验证码, 验证码推送到邮箱
 	AuthTypePhonePassword = "phone_password" // 手机+密码
@@ -20,18 +22,15 @@ const (
 	AuthTypeOAuthWeibo    = "oauth_weibo"    // 微博 oauth
 )
 
-// 该结构体序列化后, 在客户端和服务器之间传递, 作为认证标识
 type SessionToken struct {
 	SessionId string `json:"sid"`
 
-	// 以下为 token 相关部分
-	TokenId       string `json:"token_id"`      // token 的标识, 每次刷新 token 改变此值
-	Authenticated bool   `json:"authenticated"` // 是否是认证后的 token, 否则为临时 token
-	UserId        int64  `json:"user_id"`       // token 的拥有者
-	AuthType      string `json:"auth_type"`     // token 的认证类型
-	PasswordTag   string `json:"password_tag"`  // 认证时的 password_tag, 对于 AuthType 是 AuthTypeEmailPassword, AuthTypePhonePassword 时有效
-	ExpAccess     int64  `json:"exp_access"`    // 该 token 的过期时间
-	ExpRefresh    int64  `json:"exp_refresh"`   // 通过该 token 换取新的 token 的截至时间, 固定值, 不会变化
+	TokenId     string `json:"token_id"`     // token 的标识, 每次刷新 token 改变此值
+	AuthType    string `json:"auth_type"`    // token 的认证类型
+	UserId      int64  `json:"user_id"`      // token 的拥有者
+	PasswordTag string `json:"password_tag"` // 认证时的 password_tag, 对于 AuthType 是 AuthTypeEmailPassword, AuthTypePhonePassword 时有效
+	ExpAccess   int64  `json:"exp_access"`   // 该 token 的过期时间
+	ExpRefresh  int64  `json:"exp_refresh"`  // 通过该 token 换取新的 token 的截至时间, 固定值, 不会变化
 }
 
 // trim(url_base64(json(token))) + "." + hex(hmac-sha256(base64_str))

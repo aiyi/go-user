@@ -1,4 +1,4 @@
-package sessiontoken
+package token
 
 import (
 	"encoding/json"
@@ -12,9 +12,9 @@ import (
 )
 
 type Session struct {
-	SessionTokenCopy SessionToken `json:"session_token_copy"` // SessionToken 副本
-	EmailCaptcha     string       `json:"email_captcha"`      // 邮箱验证码
-	PhoneCaptcha     string       `json:"phone_captcha"`      // 短信验证码
+	SessionToken SessionToken `json:"session_token"` // SessionToken 副本
+	EmailCaptcha string       `json:"email_captcha"` // 邮箱验证码
+	PhoneCaptcha string       `json:"phone_captcha"` // 短信验证码
 }
 
 // 获取 Session, 如果找不到返回 frontend.ErrNotFound.
@@ -27,7 +27,7 @@ func SessionGet(token *SessionToken) (*Session, error) {
 		memcacheClient  *memcache.Client
 		memcacheItemKey string
 	)
-	if token.Authenticated {
+	if token.AuthType == AuthTypeGuest {
 		memcacheClient = mc.Client()
 		memcacheItemKey = mc.SessionCacheKey(token.SessionId)
 	} else {
@@ -60,15 +60,15 @@ func SessionAdd(ss *Session) (err error) {
 		return
 	}
 
-	if ss.SessionTokenCopy.Authenticated {
+	if ss.SessionToken.AuthType == AuthTypeGuest {
 		item := memcache.Item{
-			Key:   mc.SessionCacheKey(ss.SessionTokenCopy.SessionId),
+			Key:   mc.SessionCacheKey(ss.SessionToken.SessionId),
 			Value: SessionBytes,
 		}
 		return mc.Client().Add(&item)
 	} else {
 		item := memcache.Item{
-			Key:   secondarymc.SessionCacheKey(ss.SessionTokenCopy.SessionId),
+			Key:   secondarymc.SessionCacheKey(ss.SessionToken.SessionId),
 			Value: SessionBytes,
 		}
 		return secondarymc.Client().Add(&item)
@@ -85,15 +85,15 @@ func SessionSet(ss *Session) (err error) {
 		return
 	}
 
-	if ss.SessionTokenCopy.Authenticated {
+	if ss.SessionToken.AuthType == AuthTypeGuest {
 		item := memcache.Item{
-			Key:   mc.SessionCacheKey(ss.SessionTokenCopy.SessionId),
+			Key:   mc.SessionCacheKey(ss.SessionToken.SessionId),
 			Value: SessionBytes,
 		}
 		return mc.Client().Set(&item)
 	} else {
 		item := memcache.Item{
-			Key:   secondarymc.SessionCacheKey(ss.SessionTokenCopy.SessionId),
+			Key:   secondarymc.SessionCacheKey(ss.SessionToken.SessionId),
 			Value: SessionBytes,
 		}
 		return secondarymc.Client().Set(&item)
@@ -106,7 +106,7 @@ func SessionDelete(token *SessionToken) (err error) {
 		return errors.New("nil SessionToken")
 	}
 
-	if token.Authenticated {
+	if token.AuthType == AuthTypeGuest {
 		err = mc.Client().Delete(mc.SessionCacheKey(token.SessionId))
 	} else {
 		err = secondarymc.Client().Delete(secondarymc.SessionCacheKey(token.SessionId))

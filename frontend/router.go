@@ -5,7 +5,8 @@ import (
 )
 
 var (
-	Engine      = gin.Default()
-	UserRouter  = Engine.Group("/user")
-	TokenRouter = UserRouter.Group("/token")
+	Engine = gin.Default()
+
+	UserGroupRouter  = Engine.Group("/user")
+	TokenGroupRouter = Engine.Group("/token")
 )
