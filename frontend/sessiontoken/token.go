@@ -25,6 +25,7 @@ const (
 type SessionToken struct {
 	SessionId         string `json:"sid"`         // 服务器索引 Session 的 key
 	TokenId           string `json:"token_id"`    // token 的标识, 每次刷新 token 改变此值
+	AuthType          string `json:"auth_type"`   // token 的认证类型
 	ExpirationAccess  int64  `json:"exp_access"`  // 该 token 的过期时间
 	ExpirationRefresh int64  `json:"exp_refresh"` // 刷新 token 的截至时间, 固定值, 不会变化
 }

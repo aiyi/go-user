@@ -11,7 +11,6 @@ import (
 
 type Session struct {
 	SessionToken   SessionToken `json:"session_token"`             // SessionToken 副本
-	AuthType       string       `json:"auth_type"`                 // token 的认证类型
 	UserId         int64        `json:"user_id"`                   // token 的拥有者
 	PasswordTag    string       `json:"password_tag"`              // 认证时的 password_tag, 对于 AuthType 是 AuthTypeEmailPassword, AuthTypePhonePassword 时有效
 	EmailCheckcode string       `json:"email_checkcode,omitempty"` // 邮箱校验码
