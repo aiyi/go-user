@@ -11,13 +11,14 @@ import (
 )
 
 type Session struct {
-	SessionToken   string `json:"session_token"`             // SessionToken 副本; 安全考虑, 比对客户端传过来的 token 字符串
-	UserId         int64  `json:"user_id"`                   // token 的拥有者
-	PasswordTag    string `json:"password_tag"`              // 认证时的 password_tag, 对于 AuthType 是 AuthTypeEmailPassword, AuthTypePhonePassword 时有效
-	EmailCheckcode string `json:"email_checkcode,omitempty"` // 邮箱校验码
-	PhoneCheckcode string `json:"phone_checkcode,omitempty"` // 短信校验码
+	SessionTokenSignature string `json:"session_token_sign"`        // SessionToken 签名; 安全考虑, 比对客户端传过来的 sessiontoken 的签名部分
+	UserId                int64  `json:"user_id"`                   // token 的拥有者
+	PasswordTag           string `json:"password_tag"`              // 认证时的 password_tag, 对于 AuthType 是 AuthTypeEmailPassword, AuthTypePhonePassword 时有效
+	EmailCheckcode        string `json:"email_checkcode,omitempty"` // 邮箱校验码
+	PhoneCheckcode        string `json:"phone_checkcode,omitempty"` // 短信校验码
 }
 
+// ^[A-Za-z0-9_-]+$
 func NewSessionId() (sid string, err error) {
 	sidx, err := id.NewSessionId()
 	if err != nil {
@@ -27,7 +28,7 @@ func NewSessionId() (sid string, err error) {
 	return
 }
 
-// temp.xxxxx
+// ^temp\.[A-Za-z0-9_-]+$
 func NewTempSessionId() (sid string, err error) {
 	sidx, err := id.NewSessionId()
 	if err != nil {
