@@ -11,8 +11,7 @@ import (
 )
 
 const (
-	AuthTypeGuest = "guest" // 游客
-
+	AuthTypeGuest          = "guest"           // 游客
 	AuthTypeEmailPassword  = "email_password"  // 邮箱+密码
 	AuthTypeEmailCheckcode = "email_checkcode" // 邮箱+校验码, 校验码推送到邮箱
 	AuthTypePhonePassword  = "phone_password"  // 手机+密码
@@ -22,15 +21,12 @@ const (
 	AuthTypeOAuthWeibo     = "oauth_weibo"     // 微博 oauth
 )
 
+// 客户端访问 API 的令牌, 客户端和服务器交互的数据结构
 type SessionToken struct {
-	SessionId string `json:"sid"`
-
-	TokenId     string `json:"token_id"`     // token 的标识, 每次刷新 token 改变此值
-	AuthType    string `json:"auth_type"`    // token 的认证类型
-	UserId      int64  `json:"user_id"`      // token 的拥有者
-	PasswordTag string `json:"password_tag"` // 认证时的 password_tag, 对于 AuthType 是 AuthTypeEmailPassword, AuthTypePhonePassword 时有效
-	ExpAccess   int64  `json:"exp_access"`   // 该 token 的过期时间
-	ExpRefresh  int64  `json:"exp_refresh"`  // 通过该 token 换取新的 token 的截至时间, 固定值, 不会变化
+	SessionId         string `json:"sid"`         // 服务器索引 Session 的 key
+	TokenId           string `json:"token_id"`    // token 的标识, 每次刷新 token 改变此值
+	ExpirationAccess  int64  `json:"exp_access"`  // 该 token 的过期时间
+	ExpirationRefresh int64  `json:"exp_refresh"` // 刷新 token 的截至时间, 固定值, 不会变化
 }
 
 // trim(url_base64(json(token))) + "." + hex(hmac-sha256(base64_str))
