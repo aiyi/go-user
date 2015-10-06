@@ -29,10 +29,10 @@ func newCheckcode() []byte {
 	return checkcode
 }
 
-func sendToPhone(phone []byte, checkcode string) (err error) {
+func sendToPhone(phone string, checkcode []byte) (err error) {
 	return errors.New("not supported")
 }
 
-func sendToEmail(email []byte, checkcode string) (err error) {
+func sendToEmail(email string, checkcode []byte) (err error) {
 	return errors.New("not supported")
 }

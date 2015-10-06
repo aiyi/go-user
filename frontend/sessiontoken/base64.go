@@ -1,4 +1,4 @@
-package token
+package sessiontoken
 
 // 去掉 base64 编码尾部的 '='.
 //  dst 引用了 src 的空间.

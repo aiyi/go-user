@@ -1,4 +1,4 @@
-package token
+package sessiontoken
 
 import (
 	"bytes"
@@ -90,6 +90,5 @@ func (token *SessionToken) Decode(tokenBytes []byte, securityKey []byte) error {
 	if err != nil {
 		return err
 	}
-
 	return json.Unmarshal(buf[:n], token)
 }

@@ -1,4 +1,4 @@
-package token
+package sessiontoken
 
 import (
 	"encoding/json"
