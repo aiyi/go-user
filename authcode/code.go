@@ -13,7 +13,7 @@ const (
 
 var mathRand = rand.New(rand.NewSource(time.Now().UnixNano()))
 
-// 生成6位随机数字验证码
+// 生成6位随机数字校验码
 func NewCode() []byte {
 	timestamp := time.Now().UnixNano() / 100
 	bs := make([]byte, CodeLength)

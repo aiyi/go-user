@@ -13,13 +13,13 @@ import (
 const (
 	AuthTypeGuest = "guest" // 游客
 
-	AuthTypeEmailPassword = "email_password" // 邮箱+密码
-	AuthTypeEmailCaptcha  = "email_captcha"  // 邮箱+验证码, 验证码推送到邮箱
-	AuthTypePhonePassword = "phone_password" // 手机+密码
-	AuthTypePhoneCaptcha  = "phone_captcha"  // 手机+验证码, 验证码短信推送给手机
-	AuthTypeOAuthQQ       = "oauth_qq"       // QQ oauth
-	AuthTypeOAuthWechat   = "oauth_wechat"   // 微信 oauth
-	AuthTypeOAuthWeibo    = "oauth_weibo"    // 微博 oauth
+	AuthTypeEmailPassword  = "email_password"  // 邮箱+密码
+	AuthTypeEmailCheckcode = "email_checkcode" // 邮箱+校验码, 校验码推送到邮箱
+	AuthTypePhonePassword  = "phone_password"  // 手机+密码
+	AuthTypePhoneCheckcode = "phone_checkcode" // 手机+校验码, 校验码短信推送给手机
+	AuthTypeOAuthQQ        = "oauth_qq"        // QQ oauth
+	AuthTypeOAuthWechat    = "oauth_wechat"    // 微信 oauth
+	AuthTypeOAuthWeibo     = "oauth_weibo"     // 微博 oauth
 )
 
 type SessionToken struct {
@@ -76,7 +76,6 @@ func (token *SessionToken) Decode(tokenBytes []byte, securityKey []byte) error {
 	Hash := hmac.New(sha256.New, securityKey)
 	Hash.Write(bytesArray[0])
 	hex.Encode(Signatrue, Hash.Sum(nil))
-
 	if !bytes.Equal(Signatrue, bytesArray[1]) {
 		return errors.New("invalid token bytes, signature mismatch")
 	}
@@ -85,7 +84,6 @@ func (token *SessionToken) Decode(tokenBytes []byte, securityKey []byte) error {
 	temp := Signatrue[:4]                       // Signatrue 不再使用, 利用其空间
 	copy(temp, tokenBytes[len(bytesArray[0]):]) // 保护 tokenBytes
 	base64Bytes := base64Pad(bytesArray[0])
-
 	buf := make([]byte, base64.URLEncoding.DecodedLen(len(base64Bytes)))
 	n, err := base64.URLEncoding.Decode(buf, base64Bytes)
 	copy(tokenBytes[len(bytesArray[0]):], temp) // 恢复 tokenBytes

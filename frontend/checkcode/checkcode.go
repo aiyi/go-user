@@ -1,4 +1,4 @@
-package captcha
+package checkcode
 
 import (
 	"errors"
@@ -7,32 +7,32 @@ import (
 )
 
 const (
-	captchaLength = 6
+	checkcodeLength = 6
 
 	digits = "0123456789"
 )
 
 var mathRand = rand.New(rand.NewSource(time.Now().UnixNano()))
 
-func newCaptcha() []byte {
+func newCheckcode() []byte {
 	timestamp := time.Now().UnixNano() / 100
 
-	captcha := make([]byte, captchaLength)
-	for i := 0; i < captchaLength; i++ {
+	checkcode := make([]byte, checkcodeLength)
+	for i := 0; i < checkcodeLength; i++ {
 		index := int(mathRand.Int63()^timestamp) % 10
 		if index < 0 {
 			index = -index
 		}
-		captcha[i] = digits[index]
+		checkcode[i] = digits[index]
 	}
 
-	return captcha
+	return checkcode
 }
 
-func sendToPhone(phone []byte, captcha string) (err error) {
+func sendToPhone(phone []byte, checkcode string) (err error) {
 	return errors.New("not supported")
 }
 
-func sendToEmail(email []byte, captcha string) (err error) {
+func sendToEmail(email []byte, checkcode string) (err error) {
 	return errors.New("not supported")
 }

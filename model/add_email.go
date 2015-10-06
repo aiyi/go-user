@@ -11,7 +11,7 @@ import (
 
 // 通过 邮箱 注册一个账户.
 //  如果 nickname 为空, 则默认为 email
-//  验证码注册时, password, salt 可以为 nil
+//  校验码注册时, password, salt 可以为 nil
 //  如果 timestamp == 0 则默认使用当前时间
 func AddByEmail(email, nickname string, password, salt []byte, timestamp int64) (userId int64, err error) {
 	userId, err = userid.GetId()
