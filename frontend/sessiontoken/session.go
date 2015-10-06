@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/bradfitz/gomemcache/memcache"
+	"github.com/chanxuehong/util/id"
 
 	"github.com/aiyi/go-user/frontend"
 	"github.com/aiyi/go-user/mc"
@@ -15,6 +16,25 @@ type Session struct {
 	PasswordTag    string `json:"password_tag"`              // 认证时的 password_tag, 对于 AuthType 是 AuthTypeEmailPassword, AuthTypePhonePassword 时有效
 	EmailCheckcode string `json:"email_checkcode,omitempty"` // 邮箱校验码
 	PhoneCheckcode string `json:"phone_checkcode,omitempty"` // 短信校验码
+}
+
+func NewSessionId() (sid string, err error) {
+	sidx, err := id.NewSessionId()
+	if err != nil {
+		return
+	}
+	sid = string(sidx)
+	return
+}
+
+// temp.xxxxx
+func NewTempSessionId() (sid string, err error) {
+	sidx, err := id.NewSessionId()
+	if err != nil {
+		return
+	}
+	sid = "temp." + string(sidx)
+	return
 }
 
 // 获取 Session, 如果找不到返回 frontend.ErrNotFound.
