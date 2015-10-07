@@ -28,6 +28,8 @@ type SessionToken struct {
 	AuthType          string `json:"auth_type"`   // token 的认证类型
 	ExpirationAccess  int64  `json:"exp_access"`  // 该 token 的过期时间
 	ExpirationRefresh int64  `json:"exp_refresh"` // 刷新 token 的截至时间, 固定值, 不会变化
+
+	Signatrue string `json:"-"` // 和客户端交互的 token 签名部分; 在 SessionToken.Encode 或者 SessionToken.Decode 才会获取到正确的值
 }
 
 // trim(url_base64(json(token))) + "." + hex(hmac-sha256(base64_str))
@@ -45,16 +47,21 @@ func (token *SessionToken) Encode(securityKey []byte) ([]byte, error) {
 	base64Bytes := buf[:base64BytesLen]
 	base64.URLEncoding.Encode(base64Bytes, jsonBytes)
 
+	// 去掉 base64 编码尾部的 '='
 	base64Bytes = base64Trim(base64Bytes)
 	base64BytesLen = len(base64Bytes)
+	signatureOffset := base64BytesLen + 1
+	buf = buf[:signatureOffset+signatureLen]
 
 	buf[base64BytesLen] = '.'
 
+	signature := buf[signatureOffset:]
 	Hash := hmac.New(sha256.New, securityKey)
 	Hash.Write(base64Bytes)
-	hex.Encode(buf[base64BytesLen+1:], Hash.Sum(nil))
+	hex.Encode(signature, Hash.Sum(nil))
+	token.Signatrue = string(signature)
 
-	return buf[:base64BytesLen+1+signatureLen], nil
+	return buf, nil
 }
 
 var tokenBytesSplitSep = []byte{'.'}
@@ -69,20 +76,21 @@ func (token *SessionToken) Decode(tokenBytes []byte, securityKey []byte) error {
 	}
 
 	// 验证签名
-	Signatrue := make([]byte, signatureLen)
+	signatrue := make([]byte, signatureLen)
 	Hash := hmac.New(sha256.New, securityKey)
 	Hash.Write(bytesArray[0])
-	hex.Encode(Signatrue, Hash.Sum(nil))
-	if !bytes.Equal(Signatrue, bytesArray[1]) {
+	hex.Encode(signatrue, Hash.Sum(nil))
+	if !bytes.Equal(signatrue, bytesArray[1]) {
 		return errors.New("invalid token bytes, signature mismatch")
 	}
+	token.Signatrue = string(signatrue)
 
 	// 解码
-	temp := Signatrue[:4]                             // Signatrue 不再使用, 利用其空间
-	copy(temp, tokenBytes[len(bytesArray[0]):])       // 保护 tokenBytes
+	temp := signatrue[:4]                             // signatrue 不再使用, 利用其空间
+	copy(temp, tokenBytes[len(bytesArray[0]):])       // 保存 tokenBytes
 	defer copy(tokenBytes[len(bytesArray[0]):], temp) // 恢复 tokenBytes
 
 	base64Bytes := base64Pad(bytesArray[0])
-	base64Reader := base64.NewDecoder(base64.URLEncoding, bytes.NewReader(base64Bytes))
-	return json.NewDecoder(base64Reader).Decode(token)
+	base64Decoder := base64.NewDecoder(base64.URLEncoding, bytes.NewReader(base64Bytes))
+	return json.NewDecoder(base64Decoder).Decode(token)
 }
