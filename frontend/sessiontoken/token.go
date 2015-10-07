@@ -83,12 +83,14 @@ func (token *SessionToken) Decode(tokenBytes []byte, securityKey []byte) error {
 	if !bytes.Equal(signatrue, bytesArray[1]) {
 		return errors.New("invalid token bytes, signature mismatch")
 	}
-	token.Signatrue = string(signatrue)
 
 	// 解码
-	temp := signatrue[:4]                             // signatrue 不再使用, 利用其空间
-	copy(temp, tokenBytes[len(bytesArray[0]):])       // 保存 tokenBytes
-	defer copy(tokenBytes[len(bytesArray[0]):], temp) // 恢复 tokenBytes
+	temp := signatrue[:4]                       // signatrue 不再使用, 利用其空间
+	copy(temp, tokenBytes[len(bytesArray[0]):]) // 保护 tokenBytes
+	defer func() {
+		copy(tokenBytes[len(bytesArray[0]):], temp) // 恢复 tokenBytes
+		token.Signatrue = string(bytesArray[1])
+	}()
 
 	base64Bytes := base64Pad(bytesArray[0])
 	base64Decoder := base64.NewDecoder(base64.URLEncoding, bytes.NewReader(base64Bytes))
