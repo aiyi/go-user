@@ -33,6 +33,7 @@ func AuthHandler(ctx *gin.Context) {
 	}
 }
 
+// 创建 guest token 和 session
 func authGuestHandler(ctx *gin.Context) {
 	sid, err := sessiontoken.NewGuestSessionId()
 	if err != nil {
@@ -41,16 +42,13 @@ func authGuestHandler(ctx *gin.Context) {
 		return
 	}
 
-	timestamp := time.Now().Unix()
-
 	tk := sessiontoken.SessionToken{
 		SessionId:         sid,
-		TokenId:           sessiontoken.NewTokenId(),
+		TokenId:           "",
 		AuthType:          sessiontoken.AuthTypeGuest,
-		ExpirationAccess:  sessiontoken.ExpirationAccess(timestamp),
-		ExpirationRefresh: sessiontoken.ExpirationRefresh(timestamp),
+		ExpirationAccess:  0,
+		ExpirationRefresh: 0,
 	}
-
 	tkEncodedBytes, err := tk.Encode(securitykey.Key)
 	if err != nil {
 		glog.Errorln(err)
@@ -78,6 +76,7 @@ func authGuestHandler(ctx *gin.Context) {
 	return
 }
 
+// 认证成功后创建 token 和 session
 func authSuccessHandler(ctx *gin.Context, authType string, user *model.User) {
 	sid, err := sessiontoken.NewSessionId()
 	if err != nil {
@@ -95,7 +94,6 @@ func authSuccessHandler(ctx *gin.Context, authType string, user *model.User) {
 		ExpirationAccess:  sessiontoken.ExpirationAccess(timestamp),
 		ExpirationRefresh: sessiontoken.ExpirationRefresh(timestamp),
 	}
-
 	tkEncodedBytes, err := tk.Encode(securitykey.Key)
 	if err != nil {
 		glog.Errorln(err)
@@ -146,6 +144,8 @@ func authEmailPasswordHandler(ctx *gin.Context) {
 			ctx.JSON(200, errors.ErrAuthFailed)
 			return
 		}
+		authSuccessHandler(ctx, sessiontoken.AuthTypeEmailPassword, user)
+		return
 	case model.ErrNotFound:
 		cipherPassword := model.EncryptPassword([]byte(password), model.PasswordSalt)
 		if !security.SecureCompare(cipherPassword, cipherPassword) {
@@ -159,9 +159,6 @@ func authEmailPasswordHandler(ctx *gin.Context) {
 		ctx.JSON(200, errors.ErrInternalServerError)
 		return
 	}
-
-	// 匹配成功
-	authSuccessHandler(ctx, sessiontoken.AuthTypeEmailPassword, user)
 }
 
 func authEmailCheckcode(ctx *gin.Context) {
@@ -189,6 +186,8 @@ func authPhonePasswordHandler(ctx *gin.Context) {
 			ctx.JSON(200, errors.ErrAuthFailed)
 			return
 		}
+		authSuccessHandler(ctx, sessiontoken.AuthTypePhonePassword, user)
+		return
 	case model.ErrNotFound:
 		cipherPassword := model.EncryptPassword([]byte(password), model.PasswordSalt)
 		if !security.SecureCompare(cipherPassword, cipherPassword) {
@@ -202,7 +201,4 @@ func authPhonePasswordHandler(ctx *gin.Context) {
 		ctx.JSON(200, errors.ErrInternalServerError)
 		return
 	}
-
-	// 匹配成功
-	authSuccessHandler(ctx, sessiontoken.AuthTypePhonePassword, user)
 }
