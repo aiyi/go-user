@@ -1,10 +1,10 @@
 package user
 
 import (
-	"github.com/gin-gonic/gin"
 	"time"
 
 	"github.com/chanxuehong/util/random"
+	"github.com/gin-gonic/gin"
 	"github.com/golang/glog"
 
 	"github.com/aiyi/go-user/frontend/errors"
@@ -13,7 +13,7 @@ import (
 )
 
 func AuthHandler(ctx *gin.Context) {
-	switch ctx.Request.Header.Get("auth_type") {
+	switch AuthType := ctx.Request.Header.Get("auth_type"); AuthType {
 	case sessiontoken.AuthTypeGuest:
 		authGuest(ctx)
 	case sessiontoken.AuthTypeEmailPassword:
