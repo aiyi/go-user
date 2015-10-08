@@ -8,6 +8,9 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+
+	"github.com/chanxuehong/util/id"
+	"github.com/chanxuehong/util/random"
 )
 
 const (
@@ -20,6 +23,30 @@ const (
 	AuthTypeOAuthWechat    = "oauth_wechat"    // 微信 oauth
 	AuthTypeOAuthWeibo     = "oauth_weibo"     // 微博 oauth
 )
+
+// ^[A-Za-z0-9_-]+$
+func NewSessionId() (sid string, err error) {
+	sidx, err := id.NewSessionId()
+	if err != nil {
+		return
+	}
+	sid = string(sidx)
+	return
+}
+
+// ^temp\.[A-Za-z0-9_-]+$
+func NewGuestSessionId() (sid string, err error) {
+	sidx, err := id.NewSessionId()
+	if err != nil {
+		return
+	}
+	sid = "temp." + string(sidx)
+	return
+}
+
+func NewTokenId() string {
+	return string(random.NewRandomEx())
+}
 
 func ExpirationAccess(timestamp int64) int64 {
 	return timestamp + 7200

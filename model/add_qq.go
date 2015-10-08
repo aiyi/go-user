@@ -3,8 +3,6 @@ package model
 import (
 	"time"
 
-	"github.com/chanxuehong/util/random"
-
 	"github.com/aiyi/go-user/db"
 	"github.com/aiyi/go-user/userid"
 )
@@ -40,7 +38,7 @@ func AddByQQ(openid, nickname string, timestamp int64) (userId int64, err error)
 		OpenId:      openid,
 		Nickname:    nickname,
 		Password:    emptyByteSlice,
-		PasswordTag: random.NewRandomEx(),
+		PasswordTag: NewPasswordTag(),
 		Salt:        emptyByteSlice,
 		CreateTime:  timestamp,
 	}

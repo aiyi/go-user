@@ -3,8 +3,6 @@ package model
 import (
 	"time"
 
-	"github.com/chanxuehong/util/random"
-
 	"github.com/aiyi/go-user/db"
 	"github.com/aiyi/go-user/userid"
 )
@@ -47,7 +45,7 @@ func AddByPhone(phone, nickname string, password, salt []byte, timestamp int64) 
 		Phone:       phone,
 		Nickname:    nickname,
 		Password:    password,
-		PasswordTag: random.NewRandomEx(),
+		PasswordTag: NewPasswordTag(),
 		Salt:        salt,
 		CreateTime:  timestamp,
 	}

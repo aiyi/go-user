@@ -1,8 +1,6 @@
 package model
 
 import (
-	"github.com/chanxuehong/util/random"
-
 	"github.com/aiyi/go-user/db"
 )
 
@@ -44,6 +42,6 @@ func setPassword(userId int64, password, salt []byte) (err error) {
 		return
 	}
 
-	_, err = stmt.Exec(password, random.NewRandomEx(), salt, userId)
+	_, err = stmt.Exec(password, NewPasswordTag(), salt, userId)
 	return
 }

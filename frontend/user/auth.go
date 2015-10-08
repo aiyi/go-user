@@ -3,21 +3,22 @@ package user
 import (
 	"time"
 
-	"github.com/chanxuehong/util/random"
+	"github.com/chanxuehong/util/security"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/glog"
 
 	"github.com/aiyi/go-user/frontend/errors"
 	"github.com/aiyi/go-user/frontend/sessiontoken"
+	"github.com/aiyi/go-user/model"
 	"github.com/aiyi/go-user/securitykey"
 )
 
 func AuthHandler(ctx *gin.Context) {
-	switch AuthType := ctx.Request.Header.Get("auth_type"); AuthType {
+	switch AuthType := ctx.Request.Header.Get("x-auth-type"); AuthType {
 	case sessiontoken.AuthTypeGuest:
-		authGuest(ctx)
+		authGuestHandler(ctx)
 	case sessiontoken.AuthTypeEmailPassword:
-		authEmailPassword(ctx)
+		authEmailPasswordHandler(ctx)
 	case sessiontoken.AuthTypeEmailCheckcode:
 	case sessiontoken.AuthTypePhonePassword:
 	case sessiontoken.AuthTypePhoneCheckcode:
@@ -31,7 +32,7 @@ func AuthHandler(ctx *gin.Context) {
 	}
 }
 
-func authGuest(ctx *gin.Context) {
+func authGuestHandler(ctx *gin.Context) {
 	sid, err := sessiontoken.NewGuestSessionId()
 	if err != nil {
 		glog.Errorln(err)
@@ -43,13 +44,13 @@ func authGuest(ctx *gin.Context) {
 
 	tk := sessiontoken.SessionToken{
 		SessionId:         sid,
-		TokenId:           string(random.NewRandomEx()),
+		TokenId:           sessiontoken.NewTokenId(),
 		AuthType:          sessiontoken.AuthTypeGuest,
 		ExpirationAccess:  sessiontoken.ExpirationAccess(timestamp),
 		ExpirationRefresh: sessiontoken.ExpirationRefresh(timestamp),
 	}
 
-	tkBytes, err := tk.Encode(securitykey.Key)
+	tkEncodedBytes, err := tk.Encode(securitykey.Key)
 	if err != nil {
 		glog.Errorln(err)
 		ctx.JSON(200, errors.ErrSessionTokenEncode)
@@ -67,17 +68,95 @@ func authGuest(ctx *gin.Context) {
 
 	resp := struct {
 		*errors.Error
-		SessionToken string `json:"sesstiontoken"`
+		SessionToken string `json:"token"`
 	}{
 		Error:        errors.ErrOK,
-		SessionToken: string(tkBytes),
+		SessionToken: string(tkEncodedBytes),
 	}
 	ctx.JSON(200, &resp)
 	return
 }
 
-func authEmailPassword(ctx *gin.Context) {
+func authEmailPasswordHandler(ctx *gin.Context) {
+	querylValues := ctx.Request.URL.Query()
+	email := querylValues.Get("email")
+	if email == "" {
+		ctx.JSON(200, errors.ErrBadRequest)
+		return
+	}
+	password := querylValues.Get("password")
+	if password == "" {
+		ctx.JSON(200, errors.ErrBadRequest)
+		return
+	}
 
+	user, err := model.GetByEmail(email)
+	switch err {
+	case nil:
+		cipherPassword := model.EncryptPassword([]byte(password), user.Salt)
+		if !security.SecureCompare(cipherPassword, user.Password) {
+			ctx.JSON(200, errors.ErrAuthFailed)
+			return
+		}
+	case model.ErrNotFound:
+		cipherPassword := model.EncryptPassword([]byte(password), model.PasswordSalt)
+		if !security.SecureCompare(cipherPassword, cipherPassword) {
+			ctx.JSON(200, errors.ErrAuthFailed)
+			return
+		}
+		ctx.JSON(200, errors.ErrAuthFailed)
+		return
+	default:
+		glog.Errorln(err)
+		ctx.JSON(200, errors.ErrInternalServerError)
+		return
+	}
+
+	// 匹配成功
+	sid, err := sessiontoken.NewSessionId()
+	if err != nil {
+		glog.Errorln(err)
+		ctx.JSON(200, errors.ErrInternalServerError)
+		return
+	}
+
+	timestamp := time.Now().Unix()
+
+	tk := sessiontoken.SessionToken{
+		SessionId:         sid,
+		TokenId:           sessiontoken.NewTokenId(),
+		AuthType:          sessiontoken.AuthTypeEmailPassword,
+		ExpirationAccess:  sessiontoken.ExpirationAccess(timestamp),
+		ExpirationRefresh: sessiontoken.ExpirationRefresh(timestamp),
+	}
+
+	tkEncodedBytes, err := tk.Encode(securitykey.Key)
+	if err != nil {
+		glog.Errorln(err)
+		ctx.JSON(200, errors.ErrSessionTokenEncode)
+		return
+	}
+
+	ss := sessiontoken.Session{
+		SessionTokenSignature: tk.Signatrue,
+		UserId:                user.Id,
+		PasswordTag:           user.PasswordTag,
+	}
+	if err = sessiontoken.SessionAdd(sid, &ss); err != nil {
+		glog.Errorln(err)
+		ctx.JSON(200, errors.ErrInternalServerError)
+		return
+	}
+
+	resp := struct {
+		*errors.Error
+		SessionToken string `json:"token"`
+	}{
+		Error:        errors.ErrOK,
+		SessionToken: string(tkEncodedBytes),
+	}
+	ctx.JSON(200, &resp)
+	return
 }
 
 func authEmailCheckcode(ctx *gin.Context) {
