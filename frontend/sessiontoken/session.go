@@ -6,7 +6,7 @@ import (
 	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/chanxuehong/util/id"
 
-	"github.com/aiyi/go-user/frontend"
+	"github.com/aiyi/go-user/frontend/errors"
 	"github.com/aiyi/go-user/mc"
 )
 
@@ -29,7 +29,7 @@ func NewSessionId() (sid string, err error) {
 }
 
 // ^temp\.[A-Za-z0-9_-]+$
-func NewTempSessionId() (sid string, err error) {
+func NewGuestSessionId() (sid string, err error) {
 	sidx, err := id.NewSessionId()
 	if err != nil {
 		return
@@ -38,12 +38,12 @@ func NewTempSessionId() (sid string, err error) {
 	return
 }
 
-// 获取 Session, 如果找不到返回 frontend.ErrNotFound.
+// 获取 Session, 如果找不到返回 errors.ErrNotFound.
 func SessionGet(sid string) (*Session, error) {
 	item, err := mc.Client().Get(mc.SessionCacheKey(sid))
 	if err != nil {
 		if err == memcache.ErrCacheMiss {
-			err = frontend.ErrNotFound
+			err = errors.ErrNotFound
 		}
 		return nil, err
 	}
@@ -81,10 +81,10 @@ func SessionSet(sid string, ss *Session) (err error) {
 	return mc.Client().Set(&item)
 }
 
-// 删除 Session, 如果没有匹配则返回 frontend.ErrNotFound.
+// 删除 Session, 如果没有匹配则返回 errors.ErrNotFound.
 func SessionDelete(sid string) (err error) {
 	if err = mc.Client().Delete(mc.SessionCacheKey(sid)); err == memcache.ErrCacheMiss {
-		err = frontend.ErrNotFound
+		err = errors.ErrNotFound
 	}
 	return
 }

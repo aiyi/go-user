@@ -21,6 +21,14 @@ const (
 	AuthTypeOAuthWeibo     = "oauth_weibo"     // 微博 oauth
 )
 
+func ExpirationAccess(timestamp int64) int64 {
+	return timestamp + 7200
+}
+
+func ExpirationRefresh(timestamp int64) int64 {
+	return timestamp + 31556952
+}
+
 // 客户端访问 API 的令牌, 客户端和服务器交互的数据结构
 type SessionToken struct {
 	SessionId         string `json:"sid"`         // 服务器索引 Session 的 key

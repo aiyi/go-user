@@ -7,7 +7,6 @@ import (
 	"runtime"
 
 	"github.com/aiyi/go-user/frontend"
-	_ "github.com/aiyi/go-user/frontend/user"
 )
 
 func main() {

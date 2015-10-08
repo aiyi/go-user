@@ -9,13 +9,9 @@ import (
 	"github.com/chanxuehong/util/random"
 	"github.com/gin-gonic/gin"
 
-	"github.com/aiyi/go-user/frontend"
+	"github.com/aiyi/go-user/frontend/errors"
 	"github.com/aiyi/go-user/model"
 )
-
-func init() {
-	frontend.UserGroupRouter.POST("", AddHandler)
-}
 
 func AddHandler(ctx *gin.Context) {
 	switch ctx.Request.Header.Get("auth_type") {
@@ -35,7 +31,7 @@ func addByEmailPassword(ctx *gin.Context) {
 		Password string `json:"password" binding:"required"`
 	}
 	if err := ctx.BindJSON(&req); err != nil {
-		ctx.JSON(200, frontend.NewError(1000, err.Error()))
+		ctx.JSON(200, errors.NewError(1000, err.Error()))
 		return
 	}
 
@@ -46,9 +42,9 @@ func addByEmailPassword(ctx *gin.Context) {
 
 	userId, err := model.AddByEmail(req.Email, "", password, salt[:], time.Now().Unix())
 	if err != nil {
-		ctx.JSON(200, frontend.NewError(1000, err.Error()))
+		ctx.JSON(200, errors.NewError(1000, err.Error()))
 		return
 	}
 
-	ctx.JSON(200, frontend.NewError(200, strconv.FormatInt(userId, 10)))
+	ctx.JSON(200, errors.NewError(200, strconv.FormatInt(userId, 10)))
 }
