@@ -16,9 +16,9 @@ import (
 const (
 	AuthTypeGuest          = "guest"           // 游客
 	AuthTypeEmailPassword  = "email_password"  // 邮箱+密码
-	AuthTypeEmailCheckcode = "email_checkcode" // 邮箱+校验码, 校验码推送到邮箱
+	AuthTypeEmailCheckCode = "email_checkcode" // 邮箱+校验码, 校验码推送到邮箱
 	AuthTypePhonePassword  = "phone_password"  // 手机+密码
-	AuthTypePhoneCheckcode = "phone_checkcode" // 手机+校验码, 校验码短信推送给手机
+	AuthTypePhoneCheckCode = "phone_checkcode" // 手机+校验码, 校验码短信推送给手机
 	AuthTypeOAuthQQ        = "oauth_qq"        // QQ oauth
 	AuthTypeOAuthWechat    = "oauth_wechat"    // 微信 oauth
 	AuthTypeOAuthWeibo     = "oauth_weibo"     // 微博 oauth

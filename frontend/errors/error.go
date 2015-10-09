@@ -13,8 +13,10 @@ const (
 	ErrCodeBadRequest          = 10001 // 输入参数不正确
 	ErrCodeAuthTypeMissing     = 20000 // auth_type 缺失
 	ErrCodeAuthTypeUnknown     = 20001 // auth_type 无法识别
-	ErrCodeSessionTokenEncode  = 20002 // sessiontoken 编码出错
-	ErrCodeAuthFailed          = 20003 // 认证失败
+	ErrCodeSessionTokenMissing = 20002 // sessiontoken 缺失
+	ErrCodeSessionTokenEncode  = 20003 // sessiontoken 编码出错
+	ErrCodeSessionTokenDecode  = 20004 // sessiontoken 解码出错
+	ErrCodeAuthFailed          = 20005 // 认证失败
 )
 
 var ErrOK = &Error{
@@ -37,9 +39,17 @@ var ErrAuthTypeUnknown = &Error{
 	ErrCode: ErrCodeAuthTypeUnknown,
 	ErrMsg:  "x-auth-type unknown",
 }
+var ErrSessionTokenMissing = &Error{
+	ErrCode: ErrCodeSessionTokenMissing,
+	ErrMsg:  "token missing",
+}
 var ErrSessionTokenEncode = &Error{
 	ErrCode: ErrCodeSessionTokenEncode,
 	ErrMsg:  "token encoding failure",
+}
+var ErrSessionTokenDecode = &Error{
+	ErrCode: ErrCodeSessionTokenDecode,
+	ErrMsg:  "token decoding failure",
 }
 var ErrAuthFailed = &Error{
 	ErrCode: ErrCodeAuthFailed,

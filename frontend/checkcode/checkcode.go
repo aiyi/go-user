@@ -1,7 +1,6 @@
 package checkcode
 
 import (
-	"errors"
 	"math/rand"
 	"time"
 )
@@ -14,7 +13,7 @@ const (
 
 var mathRand = rand.New(rand.NewSource(time.Now().UnixNano()))
 
-func newCheckcode() []byte {
+func newCode() []byte {
 	timestamp := time.Now().UnixNano() / 100
 
 	checkcode := make([]byte, checkcodeLength)
@@ -27,12 +26,4 @@ func newCheckcode() []byte {
 	}
 
 	return checkcode
-}
-
-func sendToPhone(phone string, checkcode []byte) (err error) {
-	return errors.New("not supported")
-}
-
-func sendToEmail(email string, checkcode []byte) (err error) {
-	return errors.New("not supported")
 }

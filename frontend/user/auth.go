@@ -19,10 +19,11 @@ func AuthHandler(ctx *gin.Context) {
 		authGuestHandler(ctx)
 	case sessiontoken.AuthTypeEmailPassword:
 		authEmailPasswordHandler(ctx)
-	case sessiontoken.AuthTypeEmailCheckcode:
+	case sessiontoken.AuthTypeEmailCheckCode:
+		authEmailCheckCodeHandler(ctx)
 	case sessiontoken.AuthTypePhonePassword:
 		authPhonePasswordHandler(ctx)
-	case sessiontoken.AuthTypePhoneCheckcode:
+	case sessiontoken.AuthTypePhoneCheckCode:
 	case sessiontoken.AuthTypeOAuthQQ:
 	case sessiontoken.AuthTypeOAuthWechat:
 	case sessiontoken.AuthTypeOAuthWeibo:
@@ -161,8 +162,63 @@ func authEmailPasswordHandler(ctx *gin.Context) {
 	}
 }
 
-func authEmailCheckcode(ctx *gin.Context) {
+func authEmailCheckCodeHandler(ctx *gin.Context) {
+	querylValues := ctx.Request.URL.Query()
+	email := querylValues.Get("email")
+	if email == "" {
+		ctx.JSON(200, errors.ErrBadRequest)
+		return
+	}
+	checkcode := querylValues.Get("checkcode")
+	if checkcode == "" {
+		ctx.JSON(200, errors.ErrBadRequest)
+		return
+	}
 
+	tkBytes := ctx.Request.Header.Get("x-token")
+	if tkBytes == "" {
+		ctx.JSON(200, errors.ErrSessionTokenMissing)
+		return
+	}
+
+	var tk sessiontoken.SessionToken
+	if err := tk.Decode([]byte(tkBytes), securitykey.Key); err != nil {
+		glog.Errorln(err)
+		ctx.JSON(200, errors.ErrSessionTokenDecode)
+		return
+	}
+
+	ss, err := sessiontoken.SessionGet(tk.SessionId)
+	if err != nil {
+		glog.Errorln(err)
+		ctx.JSON(200, errors.ErrInternalServerError)
+		return
+	}
+	if ss.SessionTokenSignature != tk.Signatrue {
+		glog.Errorln(err)
+		ctx.JSON(200, errors.ErrInternalServerError)
+		return
+	}
+	wantCheckCode := ss.EmailCheckCode
+	if wantCheckCode == nil || time.Now().Unix() >= wantCheckCode.Expiration || wantCheckCode.Code != checkcode {
+		glog.Errorln(err)
+		ctx.JSON(200, errors.ErrInternalServerError)
+		return
+	}
+
+	user, err := model.GetByEmail(email)
+	switch err {
+	case nil:
+		authSuccessHandler(ctx, sessiontoken.AuthTypeEmailCheckCode, user)
+		return
+	case model.ErrNotFound:
+		ctx.JSON(200, errors.ErrAuthFailed)
+		return
+	default:
+		glog.Errorln(err)
+		ctx.JSON(200, errors.ErrInternalServerError)
+		return
+	}
 }
 
 func authPhonePasswordHandler(ctx *gin.Context) {

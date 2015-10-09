@@ -9,12 +9,17 @@ import (
 	"github.com/aiyi/go-user/mc"
 )
 
+type CheckCode struct {
+	Code       string `json:"code"`
+	Expiration int64  `json:"exp"`
+}
+
 type Session struct {
-	SessionTokenSignature string `json:"session_token_sign"`        // SessionToken 签名; 安全考虑, 比对客户端传过来的 sessiontoken 的签名部分
-	UserId                int64  `json:"user_id,omitempty"`         // token 的拥有者
-	PasswordTag           string `json:"password_tag,omitempty"`    // 认证时的 password_tag, 对于 AuthType 是 AuthTypeEmailPassword, AuthTypePhonePassword 时有效
-	EmailCheckcode        string `json:"email_checkcode,omitempty"` // 邮箱校验码
-	PhoneCheckcode        string `json:"phone_checkcode,omitempty"` // 短信校验码
+	SessionTokenSignature string     `json:"session_token_sign"`        // SessionToken 签名; 安全考虑, 比对客户端传过来的 sessiontoken 的签名部分
+	UserId                int64      `json:"user_id,omitempty"`         // token 的拥有者
+	PasswordTag           string     `json:"password_tag,omitempty"`    // 认证时的 password_tag, 对于 AuthType 是 AuthTypeEmailPassword, AuthTypePhonePassword 时有效
+	EmailCheckCode        *CheckCode `json:"email_checkcode,omitempty"` // 邮箱校验码
+	PhoneCheckCode        *CheckCode `json:"phone_checkcode,omitempty"` // 短信校验码
 }
 
 // 获取 Session, 如果找不到返回 errors.ErrNotFound.
