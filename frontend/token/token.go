@@ -1,4 +1,4 @@
-package sessiontoken
+package token
 
 import (
 	"bytes"
@@ -8,9 +8,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
-
-	"github.com/chanxuehong/util/id"
-	"github.com/chanxuehong/util/random"
 )
 
 const (
@@ -24,51 +21,19 @@ const (
 	AuthTypeOAuthWeibo     = "oauth_weibo"     // 微博 oauth
 )
 
-// ^[A-Za-z0-9_-]+$
-func NewSessionId() (sid string, err error) {
-	sidx, err := id.NewSessionId()
-	if err != nil {
-		return
-	}
-	sid = string(sidx)
-	return
-}
-
-// ^temp\.[A-Za-z0-9_-]+$
-func NewGuestSessionId() (sid string, err error) {
-	sidx, err := id.NewSessionId()
-	if err != nil {
-		return
-	}
-	sid = "temp." + string(sidx)
-	return
-}
-
-func NewTokenId() string {
-	return string(random.NewRandomEx())
-}
-
-func ExpirationAccess(timestamp int64) int64 {
-	return timestamp + 7200
-}
-
-func ExpirationRefresh(timestamp int64) int64 {
-	return timestamp + 31556952
-}
-
 // 客户端访问 API 的令牌, 客户端和服务器交互的数据结构
-type SessionToken struct {
+type Token struct {
 	SessionId         string `json:"sid"`         // 服务器索引 Session 的 key
 	TokenId           string `json:"token_id"`    // token 的标识, 每次刷新 token 改变此值
 	AuthType          string `json:"auth_type"`   // token 的认证类型
 	ExpirationAccess  int64  `json:"exp_access"`  // 该 token 的过期时间; 0 表示永远有效
 	ExpirationRefresh int64  `json:"exp_refresh"` // 刷新 token 的截至时间, 固定值, 不会变化; 0 表示永远有效
 
-	Signatrue string `json:"-"` // 和客户端交互的 token 签名部分; 在 SessionToken.Encode 或者 SessionToken.Decode 才会获取到正确的值
+	Signatrue string `json:"-"` // 和客户端交互的 token 签名部分; 在 Token.Encode 或者 Token.Decode 才会获取到正确的值
 }
 
 // trim(url_base64(json(token))) + "." + hex(hmac-sha256(base64_str))
-func (token *SessionToken) Encode(securityKey []byte) ([]byte, error) {
+func (token *Token) Encode(securityKey []byte) ([]byte, error) {
 	const signatureLen = 64 // hmac-sha256
 
 	jsonBytes, err := json.Marshal(token)
@@ -102,7 +67,7 @@ func (token *SessionToken) Encode(securityKey []byte) ([]byte, error) {
 var tokenBytesSplitSep = []byte{'.'}
 
 // trim(url_base64(json(token))) + "." + hex(hmac-sha256(base64_str))
-func (token *SessionToken) Decode(tokenBytes []byte, securityKey []byte) error {
+func (token *Token) Decode(tokenBytes []byte, securityKey []byte) error {
 	const signatureLen = 64 // hmac-sha256
 
 	bytesArray := bytes.Split(tokenBytes, tokenBytesSplitSep)

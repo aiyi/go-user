@@ -8,15 +8,17 @@ import (
 var ErrNotFound = errors.New("item not found")
 
 const (
-	ErrCodeOK                  = 0
-	ErrCodeInternalServerError = 10000 // 内部服务器出错
-	ErrCodeBadRequest          = 10001 // 输入参数不正确
-	ErrCodeAuthTypeMissing     = 20000 // auth_type 缺失
-	ErrCodeAuthTypeUnknown     = 20001 // auth_type 无法识别
-	ErrCodeSessionTokenMissing = 20002 // sessiontoken 缺失
-	ErrCodeSessionTokenEncode  = 20003 // sessiontoken 编码出错
-	ErrCodeSessionTokenDecode  = 20004 // sessiontoken 解码出错
-	ErrCodeAuthFailed          = 20005 // 认证失败
+	ErrCodeOK = 0
+
+	ErrCodeBadRequest          = 10000 // 输入参数不正确
+	ErrCodeInternalServerError = 10001 // 内部服务器出错
+
+	ErrCodeAuthTypeMissing = 20000 // auth_type 缺失
+	ErrCodeAuthTypeUnknown = 20001 // auth_type 无法识别
+	ErrCodeTokenMissing    = 20002 // token 缺失
+	ErrCodeTokenEncode     = 20003 // token 编码出错
+	ErrCodeTokenDecode     = 20004 // token 解码出错
+	ErrCodeAuthFailed      = 20005 // 认证失败
 )
 
 var ErrOK = &Error{
@@ -39,16 +41,16 @@ var ErrAuthTypeUnknown = &Error{
 	ErrCode: ErrCodeAuthTypeUnknown,
 	ErrMsg:  "x-auth-type unknown",
 }
-var ErrSessionTokenMissing = &Error{
-	ErrCode: ErrCodeSessionTokenMissing,
+var ErrTokenMissing = &Error{
+	ErrCode: ErrCodeTokenMissing,
 	ErrMsg:  "token missing",
 }
-var ErrSessionTokenEncode = &Error{
-	ErrCode: ErrCodeSessionTokenEncode,
+var ErrTokenEncode = &Error{
+	ErrCode: ErrCodeTokenEncode,
 	ErrMsg:  "token encoding failure",
 }
-var ErrSessionTokenDecode = &Error{
-	ErrCode: ErrCodeSessionTokenDecode,
+var ErrTokenDecode = &Error{
+	ErrCode: ErrCodeTokenDecode,
 	ErrMsg:  "token decoding failure",
 }
 var ErrAuthFailed = &Error{
