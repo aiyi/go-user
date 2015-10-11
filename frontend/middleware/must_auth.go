@@ -1,9 +1,10 @@
 package middleware
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang/glog"
-	"time"
 
 	"github.com/aiyi/go-user/frontend/errors"
 	"github.com/aiyi/go-user/frontend/session"
