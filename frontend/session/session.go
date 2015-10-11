@@ -2,11 +2,11 @@ package session
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
 
 	"github.com/bradfitz/gomemcache/memcache"
 
-	myerrors "github.com/aiyi/go-user/frontend/errors"
+	"github.com/aiyi/go-user/frontend/errors"
 	"github.com/aiyi/go-user/mc"
 )
 
@@ -31,7 +31,7 @@ func Get(sid string) (ss *Session, err error) {
 	item, err := mc.Client().Get(mc.SessionKey(sid))
 	if err != nil {
 		if err == memcache.ErrCacheMiss {
-			err = myerrors.ErrNotFound
+			err = errors.ErrNotFound
 		}
 		return
 	}
@@ -49,7 +49,7 @@ func Get(sid string) (ss *Session, err error) {
 func CompareAndSwap(sid string, ss *Session) (err error) {
 	item := ss.memcacheItem
 	if item == nil || item.Key != mc.SessionKey(sid) {
-		return errors.New("Session 不是通过 Get 获取或者 sid 不匹配")
+		return fmt.Errorf("参数 Session 不是通过 sid:%q 获取的", sid)
 	}
 
 	SessionBytes, err := json.Marshal(ss)
@@ -92,7 +92,7 @@ func Set(sid string, ss *Session) (err error) {
 // 删除 Session, 如果没有匹配则返回 errors.ErrNotFound.
 func Delete(sid string) (err error) {
 	if err = mc.Client().Delete(mc.SessionKey(sid)); err == memcache.ErrCacheMiss {
-		err = myerrors.ErrNotFound
+		err = errors.ErrNotFound
 	}
 	return
 }
