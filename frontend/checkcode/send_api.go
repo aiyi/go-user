@@ -1,14 +1,15 @@
 package checkcode
 
 import (
-	"errors"
+	"log"
 )
 
-func sendToPhone(phone string, checkcode []byte) (err error) {
-	//return errors.New("not supported")
+func sendToPhone(phone string, checkcode string) (err error) {
+	log.Println(checkcode)
 	return nil
 }
 
-func sendToEmail(email string, checkcode []byte) (err error) {
-	return errors.New("not supported")
+func sendToEmail(email string, checkcode string) (err error) {
+	log.Println(checkcode)
+	return nil
 }

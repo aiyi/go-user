@@ -10,6 +10,8 @@ import (
 	"github.com/aiyi/go-user/mc"
 )
 
+const CheckCodeMaxTimes = 3 // 校验码最多可以校验多少次
+
 type CheckCode struct {
 	Key   string `json:"key"`   // email, phone...
 	Code  string `json:"code"`  // 校验码

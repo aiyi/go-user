@@ -10,7 +10,7 @@ import (
 	"github.com/aiyi/go-user/frontend/token"
 )
 
-func GenerateAndSendToPhoneHandler(ctx *gin.Context) {
+func RequestForPhoneHandler(ctx *gin.Context) {
 	// CheckTokenHandler(ctx)
 	queryValues := ctx.Request.URL.Query()
 	phone := queryValues.Get("phone")
@@ -35,7 +35,7 @@ func GenerateAndSendToPhoneHandler(ctx *gin.Context) {
 
 	checkcode := session.CheckCode{
 		Key:   phone,
-		Code:  string(code),
+		Code:  code,
 		Times: 0,
 	}
 	ss.PhoneCheckCode = &checkcode
@@ -49,6 +49,6 @@ func GenerateAndSendToPhoneHandler(ctx *gin.Context) {
 	return
 }
 
-func GenerateAndSendToEmailHandler(ctx *gin.Context) {
+func RequestForEmailHandler(ctx *gin.Context) {
 
 }

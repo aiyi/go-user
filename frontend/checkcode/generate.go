@@ -10,7 +10,7 @@ const digits = "0123456789"
 var mathRand = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 // 生成6位随机数字
-func generateCode() []byte {
+func generateCode() string {
 	checkcode := make([]byte, 6)
 
 	timestamp := time.Now().UnixNano() / 100
@@ -22,5 +22,5 @@ func generateCode() []byte {
 		checkcode[i] = digits[index]
 	}
 
-	return checkcode
+	return string(checkcode)
 }

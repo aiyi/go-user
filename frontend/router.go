@@ -20,6 +20,7 @@ func init() {
 
 	CheckCodeGroupRouter := Engine.Group("/checkcode")
 	{
-		CheckCodeGroupRouter.POST("/gen_and_send_to_phone", middleware.CheckTokenHandler, checkcode.GenerateAndSendToPhoneHandler)
+		CheckCodeGroupRouter.POST("/request_for_phone", middleware.CheckTokenHandler, checkcode.RequestForPhoneHandler)
+		CheckCodeGroupRouter.POST("/request_for_email", middleware.CheckTokenHandler, checkcode.RequestForEmailHandler)
 	}
 }
