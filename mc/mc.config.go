@@ -1,5 +1,9 @@
 package mc
 
+import (
+	"github.com/aiyi/go-user/config"
+)
+
 func getServerList() ([]string, error) {
-	return []string{"xxx.xxx.xxx.xxx:11211"}, nil
+	return config.ConfigData.MemcacheServerList, nil
 }

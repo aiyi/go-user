@@ -1,0 +1,13 @@
+{
+  "mysql": {
+    "username": "username",
+    "password": "password",
+    "host": "localhost",
+    "port": 3306,
+    "database": "user"
+  },
+  "memcache_server_list": [
+    "localhost:11211"
+  ],
+  "security_key": "MwGVQoZSYF/mtdA/YWGGTgslJwM8FH2FmGpDGEp75IIwF9FYBiMfRlsgmt3RUuGmn+50sKOaY3MBESajEQZ79dqP9/8pZqadXnryiwGoDzyjjzS+koo0a1rjZcZM8CEH0mCezJ9f6jHeliumOlDG+lHPGsxVMnHoQ6mg9630iCY="
+}
