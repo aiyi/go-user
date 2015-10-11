@@ -29,12 +29,6 @@ func RequestForPhoneHandler(ctx *gin.Context) {
 	ss := ctx.MustGet("session").(*session.Session)
 
 	code := generateCode()
-	if err := sendCodeToPhone(phone, code); err != nil {
-		glog.Errorln(err)
-		ctx.JSON(200, errors.ErrInternalServerError)
-		return
-	}
-
 	checkcode := session.CheckCode{
 		Key:   phone,
 		Code:  code,
@@ -42,6 +36,12 @@ func RequestForPhoneHandler(ctx *gin.Context) {
 	}
 	ss.PhoneCheckCode = &checkcode
 	if err := session.Set(tk.SessionId, ss); err != nil {
+		glog.Errorln(err)
+		ctx.JSON(200, errors.ErrInternalServerError)
+		return
+	}
+
+	if err := sendCodeToPhone(phone, code); err != nil {
 		glog.Errorln(err)
 		ctx.JSON(200, errors.ErrInternalServerError)
 		return
@@ -70,12 +70,6 @@ func RequestForEmailHandler(ctx *gin.Context) {
 	ss := ctx.MustGet("session").(*session.Session)
 
 	code := generateCode()
-	if err := sendCodeToEmail(email, code); err != nil {
-		glog.Errorln(err)
-		ctx.JSON(200, errors.ErrInternalServerError)
-		return
-	}
-
 	checkcode := session.CheckCode{
 		Key:   email,
 		Code:  code,
@@ -83,6 +77,12 @@ func RequestForEmailHandler(ctx *gin.Context) {
 	}
 	ss.EmailCheckCode = &checkcode
 	if err := session.Set(tk.SessionId, ss); err != nil {
+		glog.Errorln(err)
+		ctx.JSON(200, errors.ErrInternalServerError)
+		return
+	}
+
+	if err := sendCodeToEmail(email, code); err != nil {
 		glog.Errorln(err)
 		ctx.JSON(200, errors.ErrInternalServerError)
 		return
