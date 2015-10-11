@@ -13,7 +13,7 @@ import (
 // 申请发送一个校验码到手机.
 //  uri?phone=XXX
 func RequestForPhoneHandler(ctx *gin.Context) {
-	// NOTE: 在此 Handler 之前的中间件获取了 token 和 session
+	// NOTE: 在此之前的中间件获取了 token 和 session
 	queryValues := ctx.Request.URL.Query()
 	phone := queryValues.Get("phone")
 	if phone == "" {
@@ -25,15 +25,15 @@ func RequestForPhoneHandler(ctx *gin.Context) {
 		return
 	}
 
+	tk := ctx.MustGet("token").(*token.Token)
+	ss := ctx.MustGet("session").(*session.Session)
+
 	code := generateCode()
 	if err := sendCodeToPhone(phone, code); err != nil {
 		glog.Errorln(err)
 		ctx.JSON(200, errors.ErrInternalServerError)
 		return
 	}
-
-	tk := ctx.MustGet("token").(*token.Token)
-	ss := ctx.MustGet("session").(*session.Session)
 
 	checkcode := session.CheckCode{
 		Key:   phone,
@@ -54,7 +54,7 @@ func RequestForPhoneHandler(ctx *gin.Context) {
 // 申请发送一个校验码到邮箱.
 //  uri?email=XXX
 func RequestForEmailHandler(ctx *gin.Context) {
-	// NOTE: 在此 Handler 之前的中间件获取了 token 和 session
+	// NOTE: 在此之前的中间件获取了 token 和 session
 	queryValues := ctx.Request.URL.Query()
 	email := queryValues.Get("email")
 	if email == "" {
@@ -66,15 +66,15 @@ func RequestForEmailHandler(ctx *gin.Context) {
 		return
 	}
 
+	tk := ctx.MustGet("token").(*token.Token)
+	ss := ctx.MustGet("session").(*session.Session)
+
 	code := generateCode()
 	if err := sendCodeToEmail(email, code); err != nil {
 		glog.Errorln(err)
 		ctx.JSON(200, errors.ErrInternalServerError)
 		return
 	}
-
-	tk := ctx.MustGet("token").(*token.Token)
-	ss := ctx.MustGet("session").(*session.Session)
 
 	checkcode := session.CheckCode{
 		Key:   email,

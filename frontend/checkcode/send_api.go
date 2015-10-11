@@ -1,15 +1,15 @@
 package checkcode
 
 import (
-	"log"
+	"fmt"
 )
 
 func sendCodeToPhone(phone, checkcode string) (err error) {
-	log.Println(checkcode)
+	fmt.Println("sendCodeToPhone:", checkcode)
 	return nil
 }
 
 func sendCodeToEmail(email, checkcode string) (err error) {
-	log.Println(checkcode)
+	fmt.Println("sendCodeToEmail:", checkcode)
 	return nil
 }

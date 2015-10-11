@@ -5,15 +5,14 @@ import (
 	"time"
 )
 
-const (
-	digits  = "0123456789"
-	digits2 = "123456789"
-)
-
 var mathRand = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 // 生成6位随机数字
 func generateCode() string {
+	const (
+		digits  = "0123456789"
+		digits2 = "123456789"
+	)
 	timestamp := time.Now().Nanosecond() / 100
 	checkcode := make([]byte, 6)
 	checkcode[0] = digits2[(mathRand.Int()^timestamp)%len(digits2)]
