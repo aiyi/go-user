@@ -19,11 +19,13 @@ type CheckCode struct {
 }
 
 type Session struct {
-	TokenSignature string     `json:"token_sign"`                // Token 签名; 安全考虑, 比对客户端传过来的 token 的签名部分
-	UserId         int64      `json:"user_id,omitempty"`         // 当前用户
-	PasswordTag    string     `json:"password_tag,omitempty"`    // 认证时的 password_tag, 对于 AuthType 是 AuthTypeEmailPassword, AuthTypePhonePassword 时有效
-	EmailCheckCode *CheckCode `json:"email_checkcode,omitempty"` // 邮箱校验码
-	PhoneCheckCode *CheckCode `json:"phone_checkcode,omitempty"` // 手机校验码
+	TokenSignature string `json:"token_sign"`             // Token 签名; 安全考虑, 比对客户端传过来的 token 的签名部分
+	UserId         int64  `json:"user_id,omitempty"`      // 当前用户
+	PasswordTag    string `json:"password_tag,omitempty"` // 认证时的 password_tag, 对于 AuthType 是 AuthTypeEmailPassword, AuthTypePhonePassword 时有效
+
+	EmailCheckCode     *CheckCode `json:"email_checkcode,omitempty"`       // 邮箱校验码
+	PhoneCheckCode     *CheckCode `json:"phone_checkcode,omitempty"`       // 手机校验码
+	OAuthWeixinMPState string     `json:"oauth_weixin_mp_state,omitempty"` // 微信公众号 oauth 登录的 state
 
 	memcacheItem *memcache.Item `json:"-"`
 }

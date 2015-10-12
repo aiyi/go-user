@@ -14,6 +14,10 @@ func init() {
 var ConfigData Config // read only
 
 type Config struct {
+	WebServer struct {
+		BaseURL string `json:"base_url"` // http://localhost:8080
+	} `json:"web_server"`
+
 	Mysql struct {
 		UserName string `json:"username"`
 		Password string `json:"password"`
@@ -21,6 +25,18 @@ type Config struct {
 		Port     int    `json:"port"`
 		Database string `json:"database"`
 	} `json:"mysql"`
+
+	Weixin struct {
+		MP struct { // 公众号
+			AppId     string `json:"appid"`
+			AppSecret string `json:"appsecret"`
+		} `json:"mp"`
+		Open struct { // 开放平台
+			AppId     string `json:"appid"`
+			AppSecret string `json:"appsecret"`
+		} `json:"open"`
+	} `json:"weixin"`
+
 	MemcacheServerList []string `json:"memcache_server_list,omitempty"`
 	SecurityKey        []byte   `json:"security_key,omitempty"`
 }
