@@ -11,8 +11,8 @@ import (
 //  如果 nickname 为空, 则默认为 email
 //  校验码注册时, password, salt 可以为 nil
 //  如果 timestamp == 0 则默认使用当前时间
-func AddByEmail(email, nickname string, password, salt []byte, timestamp int64) (userId int64, err error) {
-	userId, err = userid.GetId()
+func AddByEmail(email, nickname string, password, salt []byte, timestamp int64) (user *User, err error) {
+	userId, err := userid.GetId()
 	if err != nil {
 		return
 	}
@@ -36,9 +36,10 @@ func AddByEmail(email, nickname string, password, salt []byte, timestamp int64) 
 		Email       string   `sqlx:"email"`
 		Nickname    string   `sqlx:"nickname"`
 		Password    []byte   `sqlx:"password"`
-		PasswordTag []byte   `sqlx:"password_tag"`
+		PasswordTag string   `sqlx:"password_tag"`
 		Salt        []byte   `sqlx:"salt"`
 		CreateTime  int64    `sqlx:"create_time"`
+		Verified    bool     `sqlx:"verified"`
 	}{
 		UserId:      userId,
 		BindType:    BindTypeEmail,
@@ -48,6 +49,7 @@ func AddByEmail(email, nickname string, password, salt []byte, timestamp int64) 
 		PasswordTag: NewPasswordTag(),
 		Salt:        salt,
 		CreateTime:  timestamp,
+		Verified:    defaultVerified,
 	}
 
 	tx, err := db.GetDB().Beginx()
@@ -56,18 +58,18 @@ func AddByEmail(email, nickname string, password, salt []byte, timestamp int64) 
 	}
 
 	// user_email 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_email(user_id, email, verified) values(?, ?, 0)")
+	stmt1, err := tx.Prepare("insert into user_email(user_id, email, verified) values(?, ?, ?)")
 	if err != nil {
 		tx.Rollback()
 		return
 	}
-	if _, err = stmt1.Exec(para.UserId, para.Email); err != nil {
+	if _, err = stmt1.Exec(para.UserId, para.Email, para.Verified); err != nil {
 		tx.Rollback()
 		return
 	}
 
 	// user 表增加一个 item
-	stmt2, err := tx.PrepareNamed("insert into user(id, nickname, bind_types, password, password_tag, salt, create_time, verified) values(:user_id, :nickname, :bind_type, :password, :password_tag, :salt, :create_time, 0)")
+	stmt2, err := tx.PrepareNamed("insert into user(id, nickname, bind_types, password, password_tag, salt, create_time, verified) values(:user_id, :nickname, :bind_type, :password, :password_tag, :salt, :create_time, :verified)")
 	if err != nil {
 		tx.Rollback()
 		return
@@ -77,6 +79,19 @@ func AddByEmail(email, nickname string, password, salt []byte, timestamp int64) 
 		return
 	}
 
-	err = tx.Commit()
+	if err = tx.Commit(); err != nil {
+		return
+	}
+
+	user = &User{
+		Id:          para.UserId,
+		Nickname:    para.Nickname,
+		BindTypes:   para.BindType,
+		Password:    para.Password,
+		PasswordTag: para.PasswordTag,
+		Salt:        para.Salt,
+		CreateTime:  para.CreateTime,
+		Verified:    para.Verified,
+	}
 	return
 }

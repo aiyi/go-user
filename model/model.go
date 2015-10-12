@@ -12,4 +12,6 @@ const (
 	BindTypeMask = BindType(int64(-1) ^ (int64(-1) << 60))
 )
 
+const defaultVerified = false
+
 var emptyByteSlice = []byte{}

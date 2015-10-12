@@ -13,7 +13,7 @@ import (
 )
 
 // 获取微信登录页面的 url
-//  redirect_uri 需要提供, 相对路径
+//  需要提供 redirect_uri, 相对路径
 func LoginURLHandler(ctx *gin.Context) {
 	// NOTE: 在此之前的中间件获取了 token 和 session
 	queryValues := ctx.Request.URL.Query()

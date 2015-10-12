@@ -22,6 +22,7 @@ const (
 	ErrCodeTokenRefreshExpired = 20006 // token refresh 过期
 	ErrCodeAuthFailed          = 20007 // 认证失败
 	ErrCodeNotAuthOrExpired    = 20008 // 没有认证或者过期
+	ErrCodeOAuthStateMismatch  = 20009 // oauth state 不匹配
 )
 
 var ErrOK = &Error{
@@ -71,6 +72,10 @@ var ErrAuthFailed = &Error{
 var ErrNotAuthOrExpired = &Error{
 	ErrCode: ErrCodeNotAuthOrExpired,
 	ErrMsg:  "not authentication or expired",
+}
+var ErrOAuthStateMismatch = &Error{
+	ErrCode: ErrCodeOAuthStateMismatch,
+	ErrMsg:  "the oauth state mismatch",
 }
 
 type Error struct {

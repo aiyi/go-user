@@ -40,11 +40,11 @@ func addByEmailPassword(ctx *gin.Context) {
 	h.Write([]byte(req.Password))
 	password := h.Sum(nil)
 
-	userId, err := model.AddByEmail(req.Email, "", password, salt[:], time.Now().Unix())
+	user, err := model.AddByEmail(req.Email, "", password, salt[:], time.Now().Unix())
 	if err != nil {
 		ctx.JSON(200, errors.NewError(1000, err.Error()))
 		return
 	}
 
-	ctx.JSON(200, errors.NewError(200, strconv.FormatInt(userId, 10)))
+	ctx.JSON(200, errors.NewError(1000, strconv.FormatInt(user.Id, 10)))
 }

@@ -10,8 +10,8 @@ import (
 // 通过 微信 注册一个账户.
 //  如果 nickname 为空, 则默认为 openid
 //  如果 timestamp == 0 则默认使用当前时间
-func AddByWechat(openid, nickname string, timestamp int64) (userId int64, err error) {
-	userId, err = userid.GetId()
+func AddByWechat(openid, nickname string, timestamp int64) (user *User, err error) {
+	userId, err := userid.GetId()
 	if err != nil {
 		return
 	}
@@ -29,9 +29,10 @@ func AddByWechat(openid, nickname string, timestamp int64) (userId int64, err er
 		OpenId      string   `sqlx:"openid"`
 		Nickname    string   `sqlx:"nickname"`
 		Password    []byte   `sqlx:"password"`
-		PasswordTag []byte   `sqlx:"password_tag"`
+		PasswordTag string   `sqlx:"password_tag"`
 		Salt        []byte   `sqlx:"salt"`
 		CreateTime  int64    `sqlx:"create_time"`
+		Verified    bool     `sqlx:"verified"`
 	}{
 		UserId:      userId,
 		BindType:    BindTypeWechat,
@@ -41,6 +42,7 @@ func AddByWechat(openid, nickname string, timestamp int64) (userId int64, err er
 		PasswordTag: NewPasswordTag(),
 		Salt:        emptyByteSlice,
 		CreateTime:  timestamp,
+		Verified:    defaultVerified,
 	}
 
 	tx, err := db.GetDB().Beginx()
@@ -49,18 +51,18 @@ func AddByWechat(openid, nickname string, timestamp int64) (userId int64, err er
 	}
 
 	// user_wechat 表增加一个 item
-	stmt1, err := tx.Prepare("insert into user_wechat(user_id, openid, verified) values(?, ?, 0)")
+	stmt1, err := tx.Prepare("insert into user_wechat(user_id, openid, verified) values(?, ?, ?)")
 	if err != nil {
 		tx.Rollback()
 		return
 	}
-	if _, err = stmt1.Exec(para.UserId, para.OpenId); err != nil {
+	if _, err = stmt1.Exec(para.UserId, para.OpenId, para.Verified); err != nil {
 		tx.Rollback()
 		return
 	}
 
 	// user 表增加一个 item
-	stmt2, err := tx.PrepareNamed("insert into user(id, nickname, bind_types, password, password_tag, salt, create_time, verified) values(:user_id, :nickname, :bind_type, :password, :password_tag, :salt, :create_time, 0)")
+	stmt2, err := tx.PrepareNamed("insert into user(id, nickname, bind_types, password, password_tag, salt, create_time, verified) values(:user_id, :nickname, :bind_type, :password, :password_tag, :salt, :create_time, :verified)")
 	if err != nil {
 		tx.Rollback()
 		return
@@ -70,6 +72,19 @@ func AddByWechat(openid, nickname string, timestamp int64) (userId int64, err er
 		return
 	}
 
-	err = tx.Commit()
+	if err = tx.Commit(); err != nil {
+		return
+	}
+
+	user = &User{
+		Id:          para.UserId,
+		Nickname:    para.Nickname,
+		BindTypes:   para.BindType,
+		Password:    para.Password,
+		PasswordTag: para.PasswordTag,
+		Salt:        para.Salt,
+		CreateTime:  para.CreateTime,
+		Verified:    para.Verified,
+	}
 	return
 }

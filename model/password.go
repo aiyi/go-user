@@ -14,8 +14,8 @@ func NewSalt() []byte {
 	return rd[:]
 }
 
-func NewPasswordTag() []byte {
-	return random.NewRandomEx()
+func NewPasswordTag() string {
+	return string(random.NewRandomEx())
 }
 
 func EncryptPassword(password, salt []byte) []byte {

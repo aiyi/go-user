@@ -8,14 +8,14 @@ import (
 
 // user 基本信息
 type User struct {
-	Id          int64  `json:"id"           sqlx:"id"`
-	Nickname    string `json:"nickname"     sqlx:"nickname"`
-	BindTypes   int64  `json:"bind_types"   sqlx:"bind_types"`
-	Password    []byte `json:"password"     sqlx:"password"`
-	PasswordTag string `json:"password_tag" sqlx:"password_tag"`
-	Salt        []byte `json:"salt"         sqlx:"salt"`
-	CreateTime  int64  `json:"create_time"  sqlx:"create_time"`
-	Verified    bool   `json:"verified"     sqlx:"verified"`
+	Id          int64    `json:"id"           sqlx:"id"`
+	Nickname    string   `json:"nickname"     sqlx:"nickname"`
+	BindTypes   BindType `json:"bind_types"   sqlx:"bind_types"`
+	Password    []byte   `json:"-"            sqlx:"password"`
+	PasswordTag string   `json:"-"            sqlx:"password_tag"`
+	Salt        []byte   `json:"-"            sqlx:"salt"`
+	CreateTime  int64    `json:"create_time"  sqlx:"create_time"`
+	Verified    bool     `json:"verified"     sqlx:"verified"`
 }
 
 func Get(userId int64) (user *User, err error) {
