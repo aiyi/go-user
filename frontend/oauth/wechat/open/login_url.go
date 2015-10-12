@@ -1,8 +1,8 @@
-package mp
+package open
 
 import (
 	"github.com/chanxuehong/util/random"
-	"github.com/chanxuehong/wechat/mp/user/oauth2"
+	"github.com/chanxuehong/wechat/open/oauth2"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/glog"
 
@@ -34,7 +34,7 @@ func LoginURLHandler(ctx *gin.Context) {
 		return
 	}
 
-	loginURL := oauth2.AuthCodeURL(config.ConfigData.Weixin.MP.AppId, redirectURI, "snsapi_userinfo", ss.OAuth2State, nil)
+	loginURL := oauth2.AuthCodeURL(config.ConfigData.Weixin.Open.AppId, redirectURI, "snsapi_login", ss.OAuth2State, nil)
 
 	resp := struct {
 		*errors.Error

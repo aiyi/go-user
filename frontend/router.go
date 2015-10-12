@@ -6,6 +6,7 @@ import (
 	"github.com/aiyi/go-user/frontend/checkcode"
 	"github.com/aiyi/go-user/frontend/middleware"
 	"github.com/aiyi/go-user/frontend/oauth/wechat/mp"
+	"github.com/aiyi/go-user/frontend/oauth/wechat/open"
 	"github.com/aiyi/go-user/frontend/user"
 )
 
@@ -15,6 +16,7 @@ func init() {
 	Engine = gin.Default()
 
 	Engine.GET("/oauth/wechat/mp/login_url", middleware.MustAuthHandler, mp.LoginURLHandler)
+	Engine.GET("/oauth/wechat/open/login_url", middleware.MustAuthHandler, open.LoginURLHandler)
 
 	UserGroupRouter := Engine.Group("/user")
 	{
