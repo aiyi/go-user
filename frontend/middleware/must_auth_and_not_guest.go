@@ -14,8 +14,8 @@ import (
 
 // 检查客户端是否是认证状态, 并且不是 guest 用户.
 // 如果是, 添加 token_string<-->x-token, token<-->*token.Token, session<-->*session.Session  到 ctx *gin.Context;
-// 如果不是, 终止 Handlers Chain.
-func MustNotGuestAuthHandler(ctx *gin.Context) {
+// 如果否, 终止 Handlers Chain.
+func MustAuthAndNotGuestHandler(ctx *gin.Context) {
 	tkString := ctx.Request.Header.Get("x-token")
 	if tkString == "" {
 		ctx.JSON(200, errors.ErrTokenMissing)
