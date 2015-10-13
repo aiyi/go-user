@@ -1,8 +1,10 @@
 package user
 
 import (
+	"net/url"
 	"time"
 
+	"github.com/chanxuehong/util/check"
 	"github.com/chanxuehong/util/security"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/glog"
@@ -13,29 +15,32 @@ import (
 	"github.com/aiyi/go-user/model"
 )
 
+// 认证, 获取token.
+//  uri?auth_type=guest
+//  uri?auth_type=email_password&email=XXX&password=XXX
+//  uri?auth_type=phone_password&phone=XXX&password=XXX
+//  uri?auth_type=email_checkcode&email=XXX&checkcode=XXX
+//  uri?auth_type=phone_checkcode&phone=XXX&checkcode=XXX
 func AuthHandler(ctx *gin.Context) {
-	switch authType := ctx.Request.Header.Get("x-auth-type"); authType {
+	queryValues := ctx.Request.URL.Query()
+	authType := queryValues.Get("auth_type")
+	switch authType {
 	case AuthTypeGuest:
-		authGuestHandler(ctx)
+		authGuest(ctx, queryValues)
 	case AuthTypeEmailPassword:
-		authEmailPasswordHandler(ctx)
+		authEmailPassword(ctx, queryValues)
 	case AuthTypeEmailCheckCode:
-		authEmailCheckCodeHandler(ctx)
+		ctx.JSON(200, errors.ErrNotSupported)
 	case AuthTypePhonePassword:
-		authPhonePasswordHandler(ctx)
+		authPhonePassword(ctx, queryValues)
 	case AuthTypePhoneCheckCode:
-	case AuthTypeOAuthQQ:
-	case AuthTypeOAuthWechat:
-	case AuthTypeOAuthWeibo:
-	case "":
-		ctx.JSON(200, errors.ErrBadRequest)
+		ctx.JSON(200, errors.ErrNotSupported)
 	default:
 		ctx.JSON(200, errors.ErrBadRequest)
 	}
 }
 
-// 创建 guest token 和 session
-func authGuestHandler(ctx *gin.Context) {
+func authGuest(ctx *gin.Context, queryValues url.Values) {
 	sid, err := session.NewGuestSessionId()
 	if err != nil {
 		glog.Errorln(err)
@@ -78,7 +83,7 @@ func authGuestHandler(ctx *gin.Context) {
 }
 
 // 认证成功后创建 token 和 session
-func authSuccessHandler(ctx *gin.Context, authType string, user *model.User) {
+func authSuccess(ctx *gin.Context, authType string, user *model.User) {
 	sid, err := session.NewSessionId()
 	if err != nil {
 		glog.Errorln(err)
@@ -87,7 +92,6 @@ func authSuccessHandler(ctx *gin.Context, authType string, user *model.User) {
 	}
 
 	timestamp := time.Now().Unix()
-
 	tk := token.Token{
 		SessionId:         sid,
 		TokenId:           token.NewTokenId(),
@@ -124,10 +128,13 @@ func authSuccessHandler(ctx *gin.Context, authType string, user *model.User) {
 	return
 }
 
-func authEmailPasswordHandler(ctx *gin.Context) {
-	querylValues := ctx.Request.URL.Query()
+func authEmailPassword(ctx *gin.Context, querylValues url.Values) {
 	email := querylValues.Get("email")
 	if email == "" {
+		ctx.JSON(200, errors.ErrBadRequest)
+		return
+	}
+	if !check.IsMailString(email) {
 		ctx.JSON(200, errors.ErrBadRequest)
 		return
 	}
@@ -145,7 +152,7 @@ func authEmailPasswordHandler(ctx *gin.Context) {
 			ctx.JSON(200, errors.ErrAuthFailed)
 			return
 		}
-		authSuccessHandler(ctx, AuthTypeEmailPassword, user)
+		authSuccess(ctx, AuthTypeEmailPassword, user)
 		return
 	case model.ErrNotFound:
 		cipherPassword := model.EncryptPassword([]byte(password), model.PasswordSalt)
@@ -162,69 +169,13 @@ func authEmailPasswordHandler(ctx *gin.Context) {
 	}
 }
 
-func authEmailCheckCodeHandler(ctx *gin.Context) {
-	querylValues := ctx.Request.URL.Query()
-	email := querylValues.Get("email")
-	if email == "" {
-		ctx.JSON(200, errors.ErrBadRequest)
-		return
-	}
-	checkcode := querylValues.Get("checkcode")
-	if checkcode == "" {
-		ctx.JSON(200, errors.ErrBadRequest)
-		return
-	}
-
-	tkBytes := ctx.Request.Header.Get("x-token")
-	if tkBytes == "" {
-		ctx.JSON(200, errors.ErrTokenMissing)
-		return
-	}
-
-	var tk token.Token
-	if err := tk.Decode([]byte(tkBytes)); err != nil {
-		glog.Errorln(err)
-		ctx.JSON(200, errors.ErrTokenDecodeFailed)
-		return
-	}
-
-	ss, err := session.Get(tk.SessionId)
-	if err != nil {
-		glog.Errorln(err)
-		ctx.JSON(200, errors.ErrInternalServerError)
-		return
-	}
-	if ss.TokenSignature != tk.Signatrue {
-		glog.Errorln(err)
-		ctx.JSON(200, errors.ErrInternalServerError)
-		return
-	}
-	//	wantCheckCode := ss.EmailCheckCode
-	//	if wantCheckCode == nil || time.Now().Unix() >= wantCheckCode.Expiration || wantCheckCode.Code != checkcode {
-	//		glog.Errorln(err)
-	//		ctx.JSON(200, errors.ErrInternalServerError)
-	//		return
-	//	}
-
-	user, err := model.GetByEmail(email)
-	switch err {
-	case nil:
-		authSuccessHandler(ctx, AuthTypeEmailCheckCode, user)
-		return
-	case model.ErrNotFound:
-		ctx.JSON(200, errors.ErrAuthFailed)
-		return
-	default:
-		glog.Errorln(err)
-		ctx.JSON(200, errors.ErrInternalServerError)
-		return
-	}
-}
-
-func authPhonePasswordHandler(ctx *gin.Context) {
-	querylValues := ctx.Request.URL.Query()
+func authPhonePassword(ctx *gin.Context, querylValues url.Values) {
 	phone := querylValues.Get("phone")
 	if phone == "" {
+		ctx.JSON(200, errors.ErrBadRequest)
+		return
+	}
+	if !check.IsChinaMobileString(phone) {
 		ctx.JSON(200, errors.ErrBadRequest)
 		return
 	}
@@ -242,7 +193,7 @@ func authPhonePasswordHandler(ctx *gin.Context) {
 			ctx.JSON(200, errors.ErrAuthFailed)
 			return
 		}
-		authSuccessHandler(ctx, AuthTypePhonePassword, user)
+		authSuccess(ctx, AuthTypePhonePassword, user)
 		return
 	case model.ErrNotFound:
 		cipherPassword := model.EncryptPassword([]byte(password), model.PasswordSalt)

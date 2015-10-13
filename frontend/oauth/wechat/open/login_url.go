@@ -15,7 +15,7 @@ import (
 // 获取微信登录页面的 url
 //  需要提供 redirect_uri, 相对路径
 func LoginURLHandler(ctx *gin.Context) {
-	// NOTE: 在此之前的中间件获取了 token 和 session
+	// MustAuthHandler(ctx)
 	queryValues := ctx.Request.URL.Query()
 	redirectURI := queryValues.Get("redirect_uri")
 	if redirectURI == "" {

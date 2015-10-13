@@ -13,7 +13,7 @@ import (
 
 // 刷新 token
 func RefreshHandler(ctx *gin.Context) {
-	// NOTE: 在此之前的中间件获取了 token 和 session
+	// MustAuthHandler(ctx)
 	tk := ctx.MustGet("token").(*token.Token)
 	if tk.AuthType == token.AuthTypeGuest {
 		resp := struct {

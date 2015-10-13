@@ -5,6 +5,7 @@ const (
 
 	ErrCodeBadRequest          = 10000 // 输入参数不正确, 包括 url 参数和 http-body-json 参数
 	ErrCodeInternalServerError = 10001 // 内部服务器出错
+	ErrCodeNotSupported        = 10002 // 不支持
 
 	ErrCodeTokenMissing        = 20000 // token 缺失
 	ErrCodeTokenEncodeFailed   = 20001 // token 编码出错
@@ -31,6 +32,10 @@ var (
 	ErrInternalServerError = &Error{
 		ErrCode: ErrCodeInternalServerError,
 		ErrMsg:  "internal server error",
+	}
+	ErrNotSupported = &Error{
+		ErrCode: ErrCodeNotSupported,
+		ErrMsg:  "not supported",
 	}
 
 	ErrTokenMissing = &Error{

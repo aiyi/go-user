@@ -13,7 +13,7 @@ import (
 // 申请发送一个校验码到手机.
 //  uri?phone=XXX
 func RequestForPhoneHandler(ctx *gin.Context) {
-	// NOTE: 在此之前的中间件获取了 token 和 session
+	// MustAuthHandler(ctx)
 	queryValues := ctx.Request.URL.Query()
 	phone := queryValues.Get("phone")
 	if phone == "" {
@@ -54,7 +54,7 @@ func RequestForPhoneHandler(ctx *gin.Context) {
 // 申请发送一个校验码到邮箱.
 //  uri?email=XXX
 func RequestForEmailHandler(ctx *gin.Context) {
-	// NOTE: 在此之前的中间件获取了 token 和 session
+	// MustAuthHandler(ctx)
 	queryValues := ctx.Request.URL.Query()
 	email := queryValues.Get("email")
 	if email == "" {
