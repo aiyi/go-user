@@ -39,6 +39,7 @@ type Config struct {
 
 	MemcacheServerList []string `json:"memcache_server_list,omitempty"`
 	SecurityKey        []byte   `json:"security_key,omitempty"`
+	SnowflakeWorkerId  int      `json:"snowflake_workerid"` // SnowflakeWorkerId 不能重复!
 }
 
 func loadConfig(cfg *Config) (err error) {
