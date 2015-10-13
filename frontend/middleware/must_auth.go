@@ -55,6 +55,7 @@ func MustAuthHandler(ctx *gin.Context) {
 		return
 	}
 
+	ctx.Set("token_string", tkString)
 	ctx.Set("token", tk)
 	ctx.Set("session", ss)
 }
