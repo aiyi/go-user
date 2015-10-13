@@ -24,8 +24,8 @@ func LoginURLHandler(ctx *gin.Context) {
 	}
 	redirectURI = config.ConfigData.WebServer.BaseURL + redirectURI
 
-	tk := ctx.MustGet("token").(*token.Token)
-	ss := ctx.MustGet("session").(*session.Session)
+	tk := ctx.MustGet("sso_token").(*token.Token)
+	ss := ctx.MustGet("sso_session").(*session.Session)
 
 	ss.OAuth2State = string(random.NewRandomEx())
 	if err := session.Set(tk.SessionId, ss); err != nil {

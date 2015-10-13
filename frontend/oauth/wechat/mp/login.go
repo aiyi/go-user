@@ -30,7 +30,7 @@ func LoginHandler(ctx *gin.Context) {
 		return
 	}
 
-	ss := ctx.MustGet("session").(*session.Session)
+	ss := ctx.MustGet("sso_session").(*session.Session)
 
 	// 比较 state 是否一致
 	if !security.SecureCompareString(state, ss.OAuth2State) {

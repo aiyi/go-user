@@ -14,7 +14,7 @@ import (
 )
 
 // 检查客户端是否是认证状态, 并且不是 guest 认证.
-// 如果是, 添加 token_string<-->x-token, token<-->*token.Token, session<-->*session.Session, user<-->*model.User  到 ctx *gin.Context;
+// 如果是, 添加 sso_token_string<-->x-token, sso_token<-->*token.Token, sso_session<-->*session.Session, sso_user<-->*model.User  到 ctx *gin.Context;
 // 如果否, 终止 Handlers Chain.
 func MustAuthAndNotGuestHandler(ctx *gin.Context) {
 	tkString := ctx.Request.Header.Get("x-token")
@@ -95,8 +95,8 @@ func MustAuthAndNotGuestHandler(ctx *gin.Context) {
 		}
 	}
 
-	ctx.Set("token_string", tkString)
-	ctx.Set("token", tk)
-	ctx.Set("session", ss)
-	ctx.Set("user", user)
+	ctx.Set("sso_token_string", tkString)
+	ctx.Set("sso_token", tk)
+	ctx.Set("sso_session", ss)
+	ctx.Set("sso_user", user)
 }

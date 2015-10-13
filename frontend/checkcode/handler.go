@@ -25,8 +25,8 @@ func RequestForPhoneHandler(ctx *gin.Context) {
 		return
 	}
 
-	tk := ctx.MustGet("token").(*token.Token)
-	ss := ctx.MustGet("session").(*session.Session)
+	tk := ctx.MustGet("sso_token").(*token.Token)
+	ss := ctx.MustGet("sso_session").(*session.Session)
 
 	code := generateCode()
 	checkcode := session.CheckCode{
@@ -66,8 +66,8 @@ func RequestForEmailHandler(ctx *gin.Context) {
 		return
 	}
 
-	tk := ctx.MustGet("token").(*token.Token)
-	ss := ctx.MustGet("session").(*session.Session)
+	tk := ctx.MustGet("sso_token").(*token.Token)
+	ss := ctx.MustGet("sso_session").(*session.Session)
 
 	code := generateCode()
 	checkcode := session.CheckCode{
