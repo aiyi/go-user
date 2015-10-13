@@ -4,3 +4,5 @@ go-user is a micro service written in go to provide essential user management fe
 - Login and logout.
 - Auth token / session management.
 - Password reset.  
+
+## need go1.5.2+ database/sql
