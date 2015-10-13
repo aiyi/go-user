@@ -43,6 +43,10 @@ func RefreshHandler(ctx *gin.Context) {
 		ctx.JSON(200, &resp)
 		return
 	}
+	if tk.ExpirationAccess >= tk.ExpirationRefresh { // 暴力的结束, 防止客户端循环的刷新
+		ctx.JSON(200, errors.ErrTokenRefreshExpired)
+		return
+	}
 
 	tk2 := token.Token{
 		SessionId:         tk.SessionId,
@@ -63,7 +67,7 @@ func RefreshHandler(ctx *gin.Context) {
 
 	ss := ctx.MustGet("session").(*session.Session)
 	ss.TokenSignature = tk2.Signatrue
-	if err = session.Set(tk.SessionId, ss); err != nil {
+	if err = session.Set(tk2.SessionId, ss); err != nil {
 		glog.Errorln(err)
 		ctx.JSON(200, errors.ErrInternalServerError)
 		return
