@@ -15,7 +15,24 @@ import (
 func RefreshHandler(ctx *gin.Context) {
 	// MustAuthHandler(ctx)
 	tk := ctx.MustGet("token").(*token.Token)
-	if tk.AuthType == token.AuthTypeGuest {
+	if tk.AuthType == token.AuthTypeGuest { // 如果是 guest 用户直接返回
+		resp := struct {
+			*errors.Error
+			Token string `json:"token"`
+		}{
+			Error: errors.ErrOK,
+			Token: ctx.MustGet("token_string").(string),
+		}
+		ctx.JSON(200, &resp)
+		return
+	}
+
+	timestamp := time.Now().Unix()
+	if timestamp >= tk.ExpirationRefresh {
+		ctx.JSON(200, errors.ErrTokenRefreshExpired)
+		return
+	}
+	if timestamp+1200 < tk.ExpirationAccess { // 过早的刷新也是直接返回
 		resp := struct {
 			*errors.Error
 			Token string `json:"token"`
@@ -31,8 +48,11 @@ func RefreshHandler(ctx *gin.Context) {
 		SessionId:         tk.SessionId,
 		TokenId:           token.NewTokenId(),
 		AuthType:          tk.AuthType,
-		ExpirationAccess:  token.ExpirationAccess(time.Now().Unix()),
+		ExpirationAccess:  token.ExpirationAccess(timestamp),
 		ExpirationRefresh: tk.ExpirationRefresh,
+	}
+	if tk2.ExpirationAccess > tk2.ExpirationRefresh {
+		tk2.ExpirationAccess = tk2.ExpirationRefresh
 	}
 	tk2EncodedBytes, err := tk2.Encode()
 	if err != nil {

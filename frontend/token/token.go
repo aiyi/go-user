@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 
+	"github.com/aiyi/go-user/model"
 	"github.com/aiyi/go-user/securitykey"
 )
 
@@ -22,6 +23,29 @@ const (
 	AuthTypeOAuthWechat    = "oauth_wechat"    // 微信 oauth
 	AuthTypeOAuthWeibo     = "oauth_weibo"     // 微博 oauth
 )
+
+func GetBindType(AuthType string) (typ model.BindType, err error) {
+	switch AuthType {
+	case AuthTypeEmailPassword, AuthTypeEmailCheckCode:
+		typ = model.BindTypeEmail
+		return
+	case AuthTypePhonePassword, AuthTypePhoneCheckCode:
+		typ = model.BindTypePhone
+		return
+	case AuthTypeOAuthQQ:
+		typ = model.BindTypeQQ
+		return
+	case AuthTypeOAuthWechat:
+		typ = model.BindTypeWechat
+		return
+	case AuthTypeOAuthWeibo:
+		typ = model.BindTypeWeibo
+		return
+	default:
+		err = errors.New("Invalid AuthType")
+		return
+	}
+}
 
 // 客户端访问 API 的令牌, 客户端和服务器交互的数据结构
 type Token struct {
