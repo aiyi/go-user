@@ -8,6 +8,8 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+
+	"github.com/aiyi/go-user/securitykey"
 )
 
 const (
@@ -33,7 +35,7 @@ type Token struct {
 }
 
 // trim(url_base64(json(token))) + "." + hex(hmac-sha256(base64_str))
-func (token *Token) Encode(securityKey []byte) ([]byte, error) {
+func (token *Token) Encode() ([]byte, error) {
 	const signatureLen = 64 // hmac-sha256
 
 	jsonBytes, err := json.Marshal(token)
@@ -56,7 +58,7 @@ func (token *Token) Encode(securityKey []byte) ([]byte, error) {
 	buf[base64BytesLen] = '.'
 
 	signature := buf[signatureOffset:]
-	Hash := hmac.New(sha256.New, securityKey)
+	Hash := hmac.New(sha256.New, securitykey.Key)
 	Hash.Write(base64Bytes)
 	hex.Encode(signature, Hash.Sum(nil))
 	token.Signatrue = string(signature)
@@ -67,7 +69,7 @@ func (token *Token) Encode(securityKey []byte) ([]byte, error) {
 var tokenBytesSplitSep = []byte{'.'}
 
 // trim(url_base64(json(token))) + "." + hex(hmac-sha256(base64_str))
-func (token *Token) Decode(tokenBytes []byte, securityKey []byte) error {
+func (token *Token) Decode(tokenBytes []byte) error {
 	const signatureLen = 64 // hmac-sha256
 
 	bytesArray := bytes.Split(tokenBytes, tokenBytesSplitSep)
@@ -77,7 +79,7 @@ func (token *Token) Decode(tokenBytes []byte, securityKey []byte) error {
 
 	// 验证签名
 	signatrue := make([]byte, signatureLen)
-	Hash := hmac.New(sha256.New, securityKey)
+	Hash := hmac.New(sha256.New, securitykey.Key)
 	Hash.Write(bytesArray[0])
 	hex.Encode(signatrue, Hash.Sum(nil))
 	if !bytes.Equal(signatrue, bytesArray[1]) {

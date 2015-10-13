@@ -11,7 +11,6 @@ import (
 	"github.com/aiyi/go-user/frontend/session"
 	"github.com/aiyi/go-user/frontend/token"
 	"github.com/aiyi/go-user/model"
-	"github.com/aiyi/go-user/securitykey"
 )
 
 func AuthHandler(ctx *gin.Context) {
@@ -51,7 +50,7 @@ func authGuestHandler(ctx *gin.Context) {
 		ExpirationAccess:  0,
 		ExpirationRefresh: 0,
 	}
-	tkEncodedBytes, err := tk.Encode(securitykey.Key)
+	tkEncodedBytes, err := tk.Encode()
 	if err != nil {
 		glog.Errorln(err)
 		ctx.JSON(200, errors.ErrTokenEncode)
@@ -96,7 +95,7 @@ func authSuccessHandler(ctx *gin.Context, authType string, user *model.User) {
 		ExpirationAccess:  token.ExpirationAccess(timestamp),
 		ExpirationRefresh: token.ExpirationRefresh(timestamp),
 	}
-	tkEncodedBytes, err := tk.Encode(securitykey.Key)
+	tkEncodedBytes, err := tk.Encode()
 	if err != nil {
 		glog.Errorln(err)
 		ctx.JSON(200, errors.ErrTokenEncode)
@@ -183,7 +182,7 @@ func authEmailCheckCodeHandler(ctx *gin.Context) {
 	}
 
 	var tk token.Token
-	if err := tk.Decode([]byte(tkBytes), securitykey.Key); err != nil {
+	if err := tk.Decode([]byte(tkBytes)); err != nil {
 		glog.Errorln(err)
 		ctx.JSON(200, errors.ErrTokenDecode)
 		return

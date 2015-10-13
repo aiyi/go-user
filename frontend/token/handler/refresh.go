@@ -9,7 +9,6 @@ import (
 	"github.com/aiyi/go-user/frontend/errors"
 	"github.com/aiyi/go-user/frontend/session"
 	"github.com/aiyi/go-user/frontend/token"
-	"github.com/aiyi/go-user/securitykey"
 )
 
 // 刷新 token
@@ -35,7 +34,7 @@ func RefreshHandler(ctx *gin.Context) {
 		ExpirationAccess:  token.ExpirationAccess(time.Now().Unix()),
 		ExpirationRefresh: tk.ExpirationRefresh,
 	}
-	tk2EncodedBytes, err := tk2.Encode(securitykey.Key)
+	tk2EncodedBytes, err := tk2.Encode()
 	if err != nil {
 		glog.Errorln(err)
 		ctx.JSON(200, errors.ErrTokenEncode)

@@ -12,10 +12,10 @@ import (
 	"github.com/aiyi/go-user/frontend/token"
 )
 
-// 检查客户端是否是认证状态, 可以是 guest 认证.
+// 检查客户端是否是认证状态, 并且不是 guest 用户.
 // 如果是, 添加 token_string<-->x-token, token<-->*token.Token, session<-->*session.Session  到 ctx *gin.Context;
 // 如果不是, 终止 Handlers Chain.
-func MustAuthHandler(ctx *gin.Context) {
+func MustNotGuestAuthHandler(ctx *gin.Context) {
 	tkString := ctx.Request.Header.Get("x-token")
 	if tkString == "" {
 		ctx.JSON(200, errors.ErrTokenMissing)
@@ -30,7 +30,12 @@ func MustAuthHandler(ctx *gin.Context) {
 		ctx.Abort()
 		return
 	}
-	if tk.AuthType != token.AuthTypeGuest && time.Now().Unix() >= tk.ExpirationAccess {
+	if tk.AuthType == token.AuthTypeGuest {
+		ctx.JSON(200, errors.ErrNotAuthOrExpired)
+		ctx.Abort()
+		return
+	}
+	if time.Now().Unix() >= tk.ExpirationAccess {
 		ctx.JSON(200, errors.ErrTokenAccessExpired)
 		ctx.Abort()
 		return

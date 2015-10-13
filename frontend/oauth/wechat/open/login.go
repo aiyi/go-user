@@ -13,7 +13,6 @@ import (
 	"github.com/aiyi/go-user/frontend/session"
 	"github.com/aiyi/go-user/frontend/token"
 	"github.com/aiyi/go-user/model"
-	"github.com/aiyi/go-user/securitykey"
 )
 
 // 微信 oauth2 登录
@@ -92,7 +91,7 @@ func LoginHandler(ctx *gin.Context) {
 			ExpirationAccess:  token.ExpirationAccess(timestamp),
 			ExpirationRefresh: token.ExpirationRefresh(timestamp),
 		}
-		tk2EncodedBytes, err := tk2.Encode(securitykey.Key)
+		tk2EncodedBytes, err := tk2.Encode()
 		if err != nil {
 			glog.Errorln(err)
 			ctx.JSON(200, errors.ErrTokenEncode)
