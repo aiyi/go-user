@@ -37,7 +37,7 @@ func RefreshHandler(ctx *gin.Context) {
 	tk2EncodedBytes, err := tk2.Encode()
 	if err != nil {
 		glog.Errorln(err)
-		ctx.JSON(200, errors.ErrTokenEncode)
+		ctx.JSON(200, errors.ErrTokenEncodeFailed)
 		return
 	}
 

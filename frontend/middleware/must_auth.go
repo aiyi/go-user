@@ -26,7 +26,7 @@ func MustAuthHandler(ctx *gin.Context) {
 	tk := &token.Token{}
 	if err := tk.Decode([]byte(tkString)); err != nil {
 		glog.Errorln(err)
-		ctx.JSON(200, errors.ErrTokenDecode)
+		ctx.JSON(200, errors.ErrTokenDecodeFailed)
 		ctx.Abort()
 		return
 	}
@@ -40,7 +40,7 @@ func MustAuthHandler(ctx *gin.Context) {
 	if err != nil {
 		glog.Errorln(err)
 		if err == errors.ErrNotFound {
-			ctx.JSON(200, errors.ErrNotAuthOrExpired)
+			ctx.JSON(200, errors.ErrTokenInvalid)
 			ctx.Abort()
 			return
 		}
@@ -49,7 +49,7 @@ func MustAuthHandler(ctx *gin.Context) {
 		return
 	}
 	if !security.SecureCompareString(tk.Signatrue, ss.TokenSignature) {
-		ctx.JSON(200, errors.ErrNotAuthOrExpired)
+		ctx.JSON(200, errors.ErrTokenInvalid)
 		ctx.Abort()
 		return
 	}

@@ -28,9 +28,9 @@ func AuthHandler(ctx *gin.Context) {
 	case AuthTypeOAuthWechat:
 	case AuthTypeOAuthWeibo:
 	case "":
-		ctx.JSON(200, errors.ErrAuthTypeMissing)
+		ctx.JSON(200, errors.ErrBadRequest)
 	default:
-		ctx.JSON(200, errors.ErrAuthTypeUnknown)
+		ctx.JSON(200, errors.ErrBadRequest)
 	}
 }
 
@@ -53,7 +53,7 @@ func authGuestHandler(ctx *gin.Context) {
 	tkEncodedBytes, err := tk.Encode()
 	if err != nil {
 		glog.Errorln(err)
-		ctx.JSON(200, errors.ErrTokenEncode)
+		ctx.JSON(200, errors.ErrTokenEncodeFailed)
 		return
 	}
 
@@ -98,7 +98,7 @@ func authSuccessHandler(ctx *gin.Context, authType string, user *model.User) {
 	tkEncodedBytes, err := tk.Encode()
 	if err != nil {
 		glog.Errorln(err)
-		ctx.JSON(200, errors.ErrTokenEncode)
+		ctx.JSON(200, errors.ErrTokenEncodeFailed)
 		return
 	}
 
@@ -184,7 +184,7 @@ func authEmailCheckCodeHandler(ctx *gin.Context) {
 	var tk token.Token
 	if err := tk.Decode([]byte(tkBytes)); err != nil {
 		glog.Errorln(err)
-		ctx.JSON(200, errors.ErrTokenDecode)
+		ctx.JSON(200, errors.ErrTokenDecodeFailed)
 		return
 	}
 

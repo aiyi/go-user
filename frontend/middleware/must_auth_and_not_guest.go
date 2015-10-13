@@ -12,7 +12,7 @@ import (
 	"github.com/aiyi/go-user/frontend/token"
 )
 
-// 检查客户端是否是认证状态, 并且不是 guest 用户.
+// 检查客户端是否是认证状态, 并且不是 guest 认证.
 // 如果是, 添加 token_string<-->x-token, token<-->*token.Token, session<-->*session.Session  到 ctx *gin.Context;
 // 如果否, 终止 Handlers Chain.
 func MustAuthAndNotGuestHandler(ctx *gin.Context) {
@@ -26,12 +26,12 @@ func MustAuthAndNotGuestHandler(ctx *gin.Context) {
 	tk := &token.Token{}
 	if err := tk.Decode([]byte(tkString)); err != nil {
 		glog.Errorln(err)
-		ctx.JSON(200, errors.ErrTokenDecode)
+		ctx.JSON(200, errors.ErrTokenDecodeFailed)
 		ctx.Abort()
 		return
 	}
 	if tk.AuthType == token.AuthTypeGuest {
-		ctx.JSON(200, errors.ErrNotAuthOrExpired)
+		ctx.JSON(200, errors.ErrTokenShouldNotGuest)
 		ctx.Abort()
 		return
 	}
@@ -45,7 +45,7 @@ func MustAuthAndNotGuestHandler(ctx *gin.Context) {
 	if err != nil {
 		glog.Errorln(err)
 		if err == errors.ErrNotFound {
-			ctx.JSON(200, errors.ErrNotAuthOrExpired)
+			ctx.JSON(200, errors.ErrTokenInvalid)
 			ctx.Abort()
 			return
 		}
@@ -54,7 +54,7 @@ func MustAuthAndNotGuestHandler(ctx *gin.Context) {
 		return
 	}
 	if !security.SecureCompareString(tk.Signatrue, ss.TokenSignature) {
-		ctx.JSON(200, errors.ErrNotAuthOrExpired)
+		ctx.JSON(200, errors.ErrTokenInvalid)
 		ctx.Abort()
 		return
 	}
