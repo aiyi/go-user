@@ -21,7 +21,7 @@ func init() {
 	Engine.GET("/oauth/wechat/open/login_url", middleware.MustAuthHandler, open.LoginURLHandler)
 	Engine.GET("/oauth/wechat/open/login", middleware.MustAuthHandler, open.LoginHandler)
 
-	Engine.GET("/token/refresh", middleware.MustAuthHandler, tokenhandler.RefreshHandler)
+	Engine.GET("/token/refresh", tokenhandler.RefreshHandler)
 
 	UserGroupRouter := Engine.Group("/user")
 	{
