@@ -1,6 +1,8 @@
 package open
 
 import (
+	"strings"
+
 	"github.com/chanxuehong/util/random"
 	"github.com/chanxuehong/wechat/open/oauth2"
 	"github.com/gin-gonic/gin"
@@ -13,7 +15,7 @@ import (
 )
 
 // 获取微信认证页面的 url
-//  需要提供 redirect_uri, 相对路径
+//  需要提供 redirect_uri
 func AuthURLHandler(ctx *gin.Context) {
 	// MustAuthHandler(ctx)
 	queryValues := ctx.Request.URL.Query()
@@ -22,7 +24,9 @@ func AuthURLHandler(ctx *gin.Context) {
 		ctx.JSON(200, errors.ErrBadRequest)
 		return
 	}
-	redirectURI = config.ConfigData.WebServer.BaseURL + redirectURI
+	if !strings.HasPrefix(redirectURI, "https:") && !strings.HasPrefix(redirectURI, "http:") {
+		redirectURI = config.ConfigData.WebServer.BaseURL + redirectURI
+	}
 
 	tk := ctx.MustGet("sso_token").(*token.Token)
 	ss := ctx.MustGet("sso_session").(*session.Session)
