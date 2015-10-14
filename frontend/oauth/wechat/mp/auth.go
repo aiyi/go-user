@@ -53,13 +53,6 @@ func AuthHandler(ctx *gin.Context) {
 		return
 	}
 
-	oauth2UserInfo, err := oauth2Client.UserInfo("")
-	if err != nil {
-		glog.Errorln(err)
-		ctx.JSON(200, errors.ErrInternalServerError)
-		return
-	}
-
 	timestamp := time.Now().Unix()
 	user, err := model.GetByWechat(oauth2Token.UnionId)
 	switch err {
@@ -68,6 +61,13 @@ func AuthHandler(ctx *gin.Context) {
 		ctx.JSON(200, errors.ErrInternalServerError)
 		return
 	case model.ErrNotFound:
+		oauth2UserInfo, err := oauth2Client.UserInfo("")
+		if err != nil {
+			glog.Errorln(err)
+			ctx.JSON(200, errors.ErrInternalServerError)
+			return
+		}
+
 		user, err = model.AddByWechat(oauth2Token.UnionId, oauth2UserInfo.Nickname, timestamp)
 		if err != nil {
 			glog.Errorln(err)

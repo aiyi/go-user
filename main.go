@@ -16,5 +16,5 @@ func main() {
 
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	log.Println(http.ListenAndServe(":8080", frontend.Engine))
+	log.Println(http.ListenAndServe(":80", frontend.Engine))
 }
