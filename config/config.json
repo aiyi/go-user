@@ -15,6 +15,10 @@
             "appsecret": "appsecret"
         }, 
         "open": {
+            "app": {
+                "appid": "appid", 
+                "appsecret": "appsecret"
+            },
             "web": {
                 "appid": "appid", 
                 "appsecret": "appsecret"

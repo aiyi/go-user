@@ -158,7 +158,7 @@ curl -X GET \
     "token": "eyJzaWQiOiJWRVJOQy1fdnR1OW1oa0pkVUVTQ0wxUG1xZWwwcVdSSSIsInRva2VuX2lkIjoiY2E5YmJhNjM2YmYxMzZiNmQxZjU4Njg3NzUyNzcwZTMiLCJhdXRoX3R5cGUiOiJwaG9uZV9wYXNzd29yZCIsImV4cF9hY2Nlc3MiOjE0NDQ3OTQ4MTMsImV4cF9yZWZyZXNoIjoxNDc2MzQ0NTY1fQ.ff5582e8680d30fc9e073ef3f4db94f152386dbe072b00fa0307818e5d8bf38e"
 }
 ```
-### 微信开放平台
+### 微信开放平台--网站应用
 #### 获取认证url
 ```http
 curl -X GET \     
@@ -173,6 +173,41 @@ curl -X GET \
     "err_code": 0, 
     "err_msg": "success", 
     "url": "https://open.weixin.qq.com/connect/qrconnect?appid=appid&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fcallback.html&response_type=code&scope=snsapi_login&state=5126d8ddd24ee49ef88329a1bb55aec1#wechat_redirect"
+}
+```
+#### 认证
+```http
+curl -X GET \     
+  -H "x-token: {{token(normally guest)}}" \  
+  -G \  
+  --data-urlencode 'code=XXXXXX' \  
+  --data-urlencode 'state=XXXXXX' \  
+  https://xxx.xxx.xxx/oauth/wechat/open/web/auth  
+```
+返回：
+```json  
+{
+    "err_code": 0, 
+    "err_msg": "success", 
+    "token": "eyJzaWQiOiJWRVJOQy1fdnR1OW1oa0pkVUVTQ0wxUG1xZWwwcVdSSSIsInRva2VuX2lkIjoiY2E5YmJhNjM2YmYxMzZiNmQxZjU4Njg3NzUyNzcwZTMiLCJhdXRoX3R5cGUiOiJwaG9uZV9wYXNzd29yZCIsImV4cF9hY2Nlc3MiOjE0NDQ3OTQ4MTMsImV4cF9yZWZyZXNoIjoxNDc2MzQ0NTY1fQ.ff5582e8680d30fc9e073ef3f4db94f152386dbe072b00fa0307818e5d8bf38e"
+}
+```
+
+### 微信开放平台--移动应用
+#### 获取认证参数
+```http
+curl -X GET \     
+  -H "x-token: {{token(normally guest)}}" \    
+  https://xxx.xxx.xxx/oauth/wechat/open/app/auth_para  
+```
+返回：
+```json  
+{
+    "err_code": 0, 
+    "err_msg": "success", 
+    "appid": "appid",
+	"state": "fasdfasdfhashdflkasjdhfjlkasdhf",
+	"scope": "snsapi_userinfo"
 }
 ```
 #### 认证
