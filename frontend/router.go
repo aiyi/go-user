@@ -16,10 +16,10 @@ var Engine *gin.Engine
 func init() {
 	Engine = gin.Default()
 
-	Engine.GET("/oauth/wechat/mp/login_url", middleware.MustAuthHandler, mp.LoginURLHandler)
-	Engine.GET("/oauth/wechat/mp/login", middleware.MustAuthHandler, mp.LoginHandler)
-	Engine.GET("/oauth/wechat/open/login_url", middleware.MustAuthHandler, open.LoginURLHandler)
-	Engine.GET("/oauth/wechat/open/login", middleware.MustAuthHandler, open.LoginHandler)
+	Engine.GET("/oauth/wechat/mp/auth_url", middleware.MustAuthHandler, mp.AuthURLHandler)
+	Engine.GET("/oauth/wechat/mp/auth", middleware.MustAuthHandler, mp.AuthHandler)
+	Engine.GET("/oauth/wechat/open/auth_url", middleware.MustAuthHandler, open.AuthURLHandler)
+	Engine.GET("/oauth/wechat/open/auth", middleware.MustAuthHandler, open.AuthHandler)
 
 	Engine.GET("/token/refresh", tokenhandler.RefreshHandler)
 

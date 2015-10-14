@@ -17,7 +17,7 @@ import (
 
 // 微信 oauth2 登录
 //  需要提供 code, state 参数.
-func LoginHandler(ctx *gin.Context) {
+func AuthHandler(ctx *gin.Context) {
 	// MustAuthHandler(ctx)
 	queryValues := ctx.Request.URL.Query()
 	code := queryValues.Get("code")

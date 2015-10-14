@@ -14,7 +14,7 @@ import (
 
 // 获取微信登录页面的 url
 //  需要提供 redirect_uri, 相对路径
-func LoginURLHandler(ctx *gin.Context) {
+func AuthURLHandler(ctx *gin.Context) {
 	// MustAuthHandler(ctx)
 	queryValues := ctx.Request.URL.Query()
 	redirectURI := queryValues.Get("redirect_uri")
@@ -34,14 +34,14 @@ func LoginURLHandler(ctx *gin.Context) {
 		return
 	}
 
-	loginURL := oauth2.AuthCodeURL(config.ConfigData.Weixin.Open.AppId, redirectURI, "snsapi_login", ss.OAuth2State, nil)
+	authURL := oauth2.AuthCodeURL(config.ConfigData.Weixin.Open.AppId, redirectURI, "snsapi_login", ss.OAuth2State, nil)
 
 	resp := struct {
 		*errors.Error
 		URL string `json:"url"`
 	}{
 		Error: errors.ErrOK,
-		URL:   loginURL,
+		URL:   authURL,
 	}
 	ctx.JSON(200, &resp)
 	return
