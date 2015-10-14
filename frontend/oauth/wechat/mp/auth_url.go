@@ -12,7 +12,7 @@ import (
 	"github.com/aiyi/go-user/frontend/token"
 )
 
-// 获取微信登录页面的 url
+// 获取微信认证页面的 url
 //  需要提供 redirect_uri, 相对路径
 func AuthURLHandler(ctx *gin.Context) {
 	// MustAuthHandler(ctx)

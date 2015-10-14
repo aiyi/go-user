@@ -14,7 +14,7 @@ import (
 	"github.com/aiyi/go-user/model"
 )
 
-// 微信公众号 oauth2 登录
+// 微信公众号 oauth2 认证
 //  需要提供 code, state 参数.
 func AuthHandler(ctx *gin.Context) {
 	// MustAuthHandler(ctx)

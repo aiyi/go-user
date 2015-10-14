@@ -125,7 +125,7 @@ curl -X GET \
 ## 第三方认证
 
 ### 微信公众号
-#### 获取登录url
+#### 获取认证url
 ```http
 curl -X GET \      
   -H "x-token: {{token(normally guest)}}" \   
@@ -141,7 +141,7 @@ curl -X GET \
     "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=appid&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fcallback.html&response_type=code&scope=snsapi_userinfo&state=28c10d7a840cc25a988b282614b02179#wechat_redirect"
 }
 ```
-#### 登录
+#### 认证
 ```http
 curl -X GET \      
   -H "x-token: {{token(normally guest)}}" \   
@@ -159,7 +159,7 @@ curl -X GET \
 }
 ```
 ### 微信开放平台
-#### 获取登录url
+#### 获取认证url
 ```http
 curl -X GET \     
   -H "x-token: {{token(normally guest)}}" \  
@@ -175,7 +175,7 @@ curl -X GET \
     "url": "https://open.weixin.qq.com/connect/qrconnect?appid=appid&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fcallback.html&response_type=code&scope=snsapi_login&state=5126d8ddd24ee49ef88329a1bb55aec1#wechat_redirect"
 }
 ```
-#### 登录
+#### 认证
 ```http
 curl -X GET \     
   -H "x-token: {{token(normally guest)}}" \  

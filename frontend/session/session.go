@@ -25,7 +25,7 @@ type Session struct {
 
 	EmailCheckCode *CheckCode `json:"email_checkcode,omitempty"` // 邮箱校验码
 	PhoneCheckCode *CheckCode `json:"phone_checkcode,omitempty"` // 手机校验码
-	OAuth2State    string     `json:"oauth2_state,omitempty"`    // 微信公众号 oauth 登录的 state
+	OAuth2State    string     `json:"oauth2_state,omitempty"`    // 微信公众号 oauth 认证的 state
 
 	memcacheItem *memcache.Item `json:"-"`
 }
