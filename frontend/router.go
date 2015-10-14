@@ -6,7 +6,7 @@ import (
 	"github.com/aiyi/go-user/frontend/checkcode"
 	"github.com/aiyi/go-user/frontend/middleware"
 	"github.com/aiyi/go-user/frontend/oauth/wechat/mp"
-	"github.com/aiyi/go-user/frontend/oauth/wechat/open"
+	"github.com/aiyi/go-user/frontend/oauth/wechat/open/web"
 	tokenhandler "github.com/aiyi/go-user/frontend/token/handler"
 	"github.com/aiyi/go-user/frontend/user"
 )
@@ -18,8 +18,8 @@ func init() {
 
 	Engine.GET("/oauth/wechat/mp/auth_url", middleware.MustAuthHandler, mp.AuthURLHandler)
 	Engine.GET("/oauth/wechat/mp/auth", middleware.MustAuthHandler, mp.AuthHandler)
-	Engine.GET("/oauth/wechat/open/auth_url", middleware.MustAuthHandler, open.AuthURLHandler)
-	Engine.GET("/oauth/wechat/open/auth", middleware.MustAuthHandler, open.AuthHandler)
+	Engine.GET("/oauth/wechat/open/web/auth_url", middleware.MustAuthHandler, web.AuthURLHandler)
+	Engine.GET("/oauth/wechat/open/web/auth", middleware.MustAuthHandler, web.AuthHandler)
 
 	Engine.GET("/token/refresh", tokenhandler.RefreshHandler)
 

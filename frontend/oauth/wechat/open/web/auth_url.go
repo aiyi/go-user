@@ -1,4 +1,4 @@
-package open
+package web
 
 import (
 	"strings"
@@ -38,7 +38,7 @@ func AuthURLHandler(ctx *gin.Context) {
 		return
 	}
 
-	authURL := oauth2.AuthCodeURL(config.ConfigData.Weixin.Open.AppId, redirectURI, "snsapi_login", ss.OAuth2State, nil)
+	authURL := oauth2.AuthCodeURL(config.ConfigData.Weixin.Open.Web.AppId, redirectURI, "snsapi_login", ss.OAuth2State, nil)
 
 	resp := struct {
 		*errors.Error

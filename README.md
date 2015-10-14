@@ -165,7 +165,7 @@ curl -X GET \
   -H "x-token: {{token(normally guest)}}" \  
   -G \  
   --data-urlencode 'redirect_uri=/xxx/yyy' \   
-  https://xxx.xxx.xxx/oauth/wechat/open/auth_url  
+  https://xxx.xxx.xxx/oauth/wechat/open/web/auth_url  
 ```
 返回：
 ```json  
@@ -182,7 +182,7 @@ curl -X GET \
   -G \  
   --data-urlencode 'code=XXXXXX' \  
   --data-urlencode 'state=XXXXXX' \  
-  https://xxx.xxx.xxx/oauth/wechat/open/auth  
+  https://xxx.xxx.xxx/oauth/wechat/open/web/auth  
 ```
 返回：
 ```json  

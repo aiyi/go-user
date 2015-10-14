@@ -32,8 +32,10 @@ type Config struct {
 			AppSecret string `json:"appsecret"`
 		} `json:"mp"`
 		Open struct { // 开放平台
-			AppId     string `json:"appid"`
-			AppSecret string `json:"appsecret"`
+			Web struct { // 网站应用
+				AppId     string `json:"appid"`
+				AppSecret string `json:"appsecret"`
+			} `json:"web"`
 		} `json:"open"`
 	} `json:"weixin"`
 

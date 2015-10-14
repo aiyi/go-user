@@ -15,8 +15,10 @@
             "appsecret": "appsecret"
         }, 
         "open": {
-            "appid": "appid", 
-            "appsecret": "appsecret"
+            "web": {
+                "appid": "appid", 
+                "appsecret": "appsecret"
+            }
         }
     }, 
     "memcache_server_list": [

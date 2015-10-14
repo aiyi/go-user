@@ -1,4 +1,4 @@
-package open
+package web
 
 import (
 	"github.com/chanxuehong/wechat/open/oauth2"
@@ -7,8 +7,8 @@ import (
 )
 
 var oauth2Config = oauth2.NewConfig(
-	config.ConfigData.Weixin.Open.AppId,
-	config.ConfigData.Weixin.Open.AppSecret,
+	config.ConfigData.Weixin.Open.Web.AppId,
+	config.ConfigData.Weixin.Open.Web.AppSecret,
 	"unused",
 	"snsapi_login",
 )

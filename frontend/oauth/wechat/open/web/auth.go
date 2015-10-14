@@ -1,4 +1,4 @@
-package open
+package web
 
 import (
 	"time"
